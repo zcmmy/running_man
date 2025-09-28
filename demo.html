@@ -1,22 +1,36 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<<<<<<< HEAD
   <meta charset="utf-8" />
   <meta name="viewport" content="width=393, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>RunningMan - 校园跑腿</title>
+=======
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=393, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>校园跑腿 - iPhone 16 Pro 仿真</title>
+>>>>>>> fe5f62df4d81643262b2048574366cf5d79a4acd
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+<<<<<<< HEAD
     }
     /* 使用系统字体 */
     body {
       background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); /* 深色渐变背景 */
+=======
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+>>>>>>> fe5f62df4d81643262b2048574366cf5d79a4acd
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+<<<<<<< HEAD
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -375,6 +389,630 @@
       color: #666;
     }
     /* 消息页面地图  */
+=======
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+    }
+    /* iPhone 16 Pro 外壳设计 */
+    .iphone-frame {
+      width: 410px;
+      height: 885px;
+      background: #000;
+      border-radius: 53px; /* R=9.5mm 精确换算值 */
+      position: relative;
+      box-shadow: 
+        0 0 0 2px #222,
+        0 15px 50px -10px rgba(0, 0, 0, 0.7),
+        0 25px 60px -15px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      transform: rotate(-0.5deg);
+      animation: float 6s ease-in-out infinite;
+    }
+    .iphone-frame::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      background: linear-gradient(to bottom, #333, #000);
+      border-radius: 53px 53px 0 0;
+      z-index: 10;
+    }
+    /* 灵动岛设计 */
+    .dynamic-island {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 170px;
+      height: 32px;
+      background: #1c1c1e;
+      border-radius: 20px;
+      overflow: hidden;
+      z-index: 20;
+      box-shadow: 0 0 0 0.5px #3a3a3c;
+    }
+    .dynamic-island::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 34px;
+      height: 16px;
+      background: #000;
+      border-radius: 8px;
+      z-index: 2;
+    }
+    .island-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #a1a1a6;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+    /* 屏幕内容区域 */
+    .screen {
+      width: 100%;
+      height: 100%;
+      background: #f0f2f5;
+      position: relative;
+      overflow: hidden;
+    }
+    /* 安全区域适配 - 仅针对灵动岛部分进行空间保留 */
+    .safe-area {
+      padding-top: calc(env(safe-area-inset-top, 0px) + 38px); /* 灵动岛高度 + 间隙 */
+      padding-bottom: env(safe-area-inset-bottom, 34px);
+      height: 100%;
+    }
+    /* 页面通用样式 */
+    .page {
+      display: none;
+      height: calc(100% - 60px);
+      overflow-y: auto;
+      padding: 16px 14px 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    .active {
+      display: block;
+    }
+    /* 首页样式 */
+    #home {
+      background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding: 0 2px;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 20px;
+      background: linear-gradient(45deg, #FF6B35, #FF9E58);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    /* 筛选区域 - 固定在搜索栏下方 */
+    .filter-bar {
+      display: flex;
+      background: white;
+      border-radius: 16px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .filter-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 0;
+      border-radius: 12px;
+      font-size: 13px;
+      color: #636366;
+      transition: all 0.2s;
+    }
+    .filter-item.active {
+      background: #f0f0f0;
+      color: #1d1d1f;
+      font-weight: 500;
+    }
+    .filter-item svg {
+      width: 16px;
+      height: 16px;
+      margin-right: 4px;
+    }
+    /* 筛选面板 */
+    .filter-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 24px 24px 0 0;
+      padding: 20px 16px 30px;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .filter-panel.active {
+      transform: translateY(0);
+    }
+    .filter-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .filter-panel-title {
+      font-weight: 600;
+      font-size: 18px;
+      color: #1d1d1f;
+    }
+    .filter-close-btn {
+      color: #636366;
+      font-size: 24px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .filter-section {
+      margin-bottom: 24px;
+    }
+    .filter-section-title {
+      font-weight: 500;
+      color: #1d1d1f;
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .filter-option {
+      padding: 6px 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 20px;
+      font-size: 14px;
+      color: #636366;
+      transition: all 0.2s;
+    }
+    .filter-option.active {
+      background: #FF6B35;
+      color: white;
+      border-color: #FF6B35;
+    }
+    .filter-actions {
+      display: flex;
+      gap: 12px;
+    }
+    .filter-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 16px;
+      font-weight: 500;
+      font-size: 16px;
+      text-align: center;
+    }
+    .filter-reset {
+      background: #f0f0f0;
+      color: #636366;
+    }
+    .filter-apply {
+      background: linear-gradient(45deg, #FF6B35, #FF9E58);
+      color: white;
+    }
+    .search-bar {
+      background: white;
+      border-radius: 18px;
+      padding: 8px 15px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .search-bar input {
+      background: transparent;
+      border: none;
+      width: 100%;
+      font-size: 14px;
+      padding: 4px 0;
+      outline: none;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 8px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      transition: transform 0.2s ease;
+      position: relative;
+      cursor: pointer;
+    }
+    .card:active {
+      transform: scale(0.98);
+    }
+    .card-category {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #FF6B35;
+      color: white;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+    .card-content {
+      padding: 16px 14px 14px;
+    }
+    .card-title {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 6px;
+      color: #1d1d1f;
+    }
+    .card-desc {
+      color: #636366;
+      font-size: 13px;
+      margin-bottom: 8px;
+      line-height: 1.4;
+      min-height: 36px;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .time-badge {
+      background: #f0f0f0;
+      color: #636366;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+    .reward {
+      font-weight: 700;
+      color: #FF6B35;
+      font-size: 15px;
+    }
+    /* 商单详情页样式 */
+    #detail {
+      background: white;
+    }
+    .detail-header {
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 14px;
+    }
+    .detail-back-btn {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1d1d1f;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+    }
+    .detail-back-btn:hover,
+    .chat-back-btn:hover {
+      background-color: #f5f5f5;
+    }
+    .detail-title {
+      font-weight: 600;
+      font-size: 18px;
+      color: #1d1d1f;
+      flex: 1;
+      text-align: center;
+      margin-left: -40px;
+    }
+    .detail-share-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1d1d1f;
+    }
+    .detail-banner {
+      height: 220px;
+      background: linear-gradient(45deg, #FF6B35, #FF9E58);
+      border-radius: 16px;
+      margin: 16px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .detail-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23ffffff" opacity="0.1"/></svg>');
+    }
+    .banner-content {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      color: white;
+    }
+    .banner-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .banner-desc {
+      font-size: 14px;
+      opacity: 0.9;
+      line-height: 1.4;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .detail-info {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+    .detail-price {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .price-label {
+      font-size: 14px;
+      color: #636366;
+    }
+    .price-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #FF6B35;
+    }
+    .detail-section {
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1d1d1f;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e0e0e0;
+      margin-left: 12px;
+    }
+    .detail-attributes {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .attribute-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .attribute-label {
+      font-size: 13px;
+      color: #636366;
+      margin-bottom: 4px;
+    }
+    .attribute-value {
+      font-weight: 500;
+      color: #1d1d1f;
+    }
+    .detail-description {
+      line-height: 1.6;
+      color: #1d1d1f;
+      font-size: 15px;
+      white-space: pre-wrap;
+    }
+    .rider-profile {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-top: 1px solid #f0f0f0;
+      border-bottom: 1px solid #f0f0f0;
+      margin: 16px -16px 0;
+    }
+    .rider-avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(45deg, #FF6B35, #FF9E58);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      margin-right: 12px;
+      font-size: 18px;
+    }
+    .rider-info {
+      flex: 1;
+    }
+    .rider-name {
+      font-weight: 600;
+      font-size: 16px;
+      color: #1d1d1f;
+      margin-bottom: 4px;
+    }
+    .rider-stats {
+      display: flex;
+      font-size: 13px;
+      color: #636366;
+    }
+    .rider-stat {
+      margin-right: 12px;
+    }
+    .detail-comments {
+      margin-top: 16px;
+    }
+    .comment-item {
+      display: flex;
+      margin-bottom: 16px;
+    }
+    .comment-avatar {
+      width: 40px;
+      height: 40px;
+      background: #f0f0f0;
+      border-radius: 50%;
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #636366;
+      font-weight: 500;
+    }
+    .comment-content {
+      flex: 1;
+    }
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .comment-author {
+      font-weight: 500;
+      color: #1d1d1f;
+    }
+    .comment-time {
+      font-size: 12px;
+      color: #636366;
+    }
+    .comment-text {
+      color: #1d1d1f;
+      line-height: 1.4;
+    }
+    .detail-footer {
+      position: fixed;
+      bottom: 60px;
+      left: 0;
+      right: 0;
+      padding: 12px 14px;
+      background: white;
+      display: flex;
+      gap: 12px;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    }
+    .detail-btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 16px;
+      font-weight: 600;
+      font-size: 16px;
+      text-align: center;
+    }
+    .btn-contact {
+      background: #f0f0f0;
+      color: #1d1d1f;
+    }
+    .btn-accept {
+      background: linear-gradient(45deg, #FF6B35, #FF9E58);
+      color: white;
+    }
+    /* 发布页样式 */
+    .form-group {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #1d1d1f;
+      font-size: 14px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 15px;
+      background: #f9f9f9;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #FF6B35;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    }
+    .submit-btn {
+      background: linear-gradient(45deg, #FF6B35, #FF9E58);
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 16px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 8px;
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+      transition: all 0.2s ease;
+    }
+    .submit-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+    }
+    /* 消息页样式 */
+    .order-status {
+      background: #e8f4ff;
+      color: #1890ff;
+      border-radius: 12px;
+      padding: 4px 12px;
+      font-size: 12px;
+      display: inline-block;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+>>>>>>> fe5f62df4d81643262b2048574366cf5d79a4acd
     .map-container {
       height: 230px;
       border-radius: 16px;
@@ -396,6 +1034,7 @@
       width: 100%;
       height: 100%;
       background: 
+<<<<<<< HEAD
         /* 校园建筑块 - 使用径向渐变模拟
         radial-gradient(circle at 25% 30%, #8B4513 0%, #8B4513 3%, transparent 3.5%),
         radial-gradient(circle at 35% 35%, #A9A9A9 0%, #A9A9A9 4%, transparent 4.5%),
@@ -438,11 +1077,326 @@
       transition: left 1s ease-in-out, top 1s ease-in-out; /* 平滑过渡 */
     }
     /* 底部导航 */
+=======
+        radial-gradient(circle at 30% 40%, #4CAF50 0%, #8BC34A 20%, transparent 25%),
+        radial-gradient(circle at 70% 60%, #2196F3 0%, #64B5F6 20%, transparent 25%),
+        radial-gradient(circle at 50% 80%, #FF9800 0%, #FFC107 20%, transparent 25%);
+      opacity: 0.15;
+    }
+    .location-marker {
+      width: 32px;
+      height: 32px;
+      background: #FF6B35;
+      border-radius: 50%;
+      position: absolute;
+      left: 45%;
+      top: 55%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.2), 
+                  0 0 0 8px rgba(255, 107, 53, 0.1);
+      animation: pulse 2s infinite;
+    }
+    .location-marker::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .rider-info {
+      display: flex;
+      align-items: center;
+      margin: 12px 0;
+      padding: 0 2px;
+    }
+    .rider-avatar {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(45deg, #FF6B35, #FF9E58);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      margin-right: 12px;
+      font-size: 16px;
+    }
+    .history-section {
+      margin-top: 24px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 16px 0 12px;
+      color: #1d1d1f;
+      display: flex;
+      align-items: center;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e0e0e0;
+      margin-left: 12px;
+    }
+    /* 聊天页面样式 */
+    #chat {
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      height: calc(100% - 60px);
+    }
+    .chat-header {
+      display: flex;
+      align-items: center;
+      padding: 12px 14px;
+      background: white;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .chat-back-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+    }
+    .chat-back-btn:hover {
+      background-color: #f5f5f5;
+    }
+    .chat-avatar {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(45deg, #FF6B35, #FF9E58);
+      border-radius: 50%;
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    .chat-info {
+      flex: 1;
+    }
+    .chat-name {
+      font-weight: 600;
+      color: #1d1d1f;
+    }
+    .chat-status {
+      font-size: 12px;
+      color: #636366;
+    }
+    .chat-options {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .message {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 18px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    .message-received {
+      background: white;
+      align-self: flex-start;
+      border-bottom-left-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    .message-sent {
+      background: #007AFF;
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    .message-time {
+      font-size: 11px;
+      color: #636366;
+      text-align: center;
+      margin: 8px 0;
+    }
+    .chat-input-area {
+      padding: 12px 14px;
+      background: white;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-input-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #636366;
+      font-size: 20px;
+    }
+    .chat-input {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 20px;
+      border: 1px solid #e0e0e0;
+      font-size: 15px;
+      background: #f9f9f9;
+    }
+    .chat-send-btn {
+      background: linear-gradient(45deg, #FF6B35, #FF9E58);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* 我的页样式 */
+    #profile {
+      background: white;
+    }
+    .profile-header {
+      padding: 20px 16px;
+      background: white;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+    .avatar {
+      width: 82px;
+      height: 82px;
+      background: linear-gradient(45deg, #FF6B35, #FF9E58);
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      border: 3px solid #FFD54F;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 28px;
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+    }
+    .level-badge {
+      background: linear-gradient(45deg, #FFD54F, #FFB300);
+      color: #5d4037;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .stats {
+      display: flex;
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 15px 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .stat-item {
+      flex: 1;
+      padding: 16px 0;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1d1d1f;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: #636366;
+    }
+    /* 设置菜单 */
+    .settings-menu {
+      position: absolute;
+      top: 20px;
+      right: 16px;
+      z-index: 100;
+    }
+    .settings-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1d1d1f;
+    }
+    .settings-dropdown {
+      position: absolute;
+      top: 40px;
+      right: 0;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      width: 200px;
+      overflow: hidden;
+      transform: scale(0.8);
+      transform-origin: top right;
+      transition: transform 0.2s;
+      z-index: 10;
+      opacity: 0;
+      visibility: hidden;
+    }
+    .settings-dropdown.active {
+      transform: scale(1);
+      opacity: 1;
+      visibility: visible;
+    }
+    .settings-item {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      color: #1d1d1f;
+      transition: background 0.2s;
+    }
+    .settings-item:active {
+      background: #f0f0f0;
+    }
+    .settings-item svg {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      color: #636366;
+    }
+    .settings-item span {
+      flex: 1;
+    }
+    .settings-item .arrow {
+      color: #636366;
+      font-size: 16px;
+    }
+    /* 底部导航栏 */
+>>>>>>> fe5f62df4d81643262b2048574366cf5d79a4acd
     .nav {
       position: absolute;
       bottom: 0;
       width: 100%;
       display: flex;
+<<<<<<< HEAD
       background: #ffffff; /* iOS 导航栏白色 */
       height: 60px;
       box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05); /* 细分隔线 */
@@ -474,10 +1428,113 @@
       stroke: currentColor;
       fill: none;
       stroke-width: 2;
+=======
+      background: white;
+      height: 60px;
+      box-shadow: 
+        0 -2px 10px rgba(0, 0, 0, 0.08),
+        0 -1px 0 #f0f0f0;
+      z-index: 100;
+    }
+    .nav-btn {
+      flex: 1;
+      padding: 8px 0 2px;
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+    .nav-btn.active {
+      color: #FF6B35;
+    }
+    .nav-icon {
+      font-size: 22px;
+      margin-bottom: 4px;
+      position: relative;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+    /* 消息页新增样式 */
+    .active-order-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 20px;
+      height: 20px;
+      background: #FF6B35;
+      color: white;
+      border-radius: 50%;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .active-order-card {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .history-orders-btn {
+      background: linear-gradient(45deg, #FF6B35, #FF9E58);
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 14px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 16px 0;
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+    }
+    /* 动画效果 */
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 53, 0);
+      }
+    }
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) rotate(-0.5deg);
+      }
+      50% {
+        transform: translateY(-10px) rotate(-0.5deg);
+      }
+    }
+    /* 滚动条样式 */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
+    }
+    /* 响应式调整 */
+    @media (max-width: 414px) {
+      .iphone-frame {
+        width: 430px;
+        height: 920px;
+      }
+>>>>>>> fe5f62df4d81643262b2048574366cf5d79a4acd
     }
   </style>
 </head>
 <body>
+<<<<<<< HEAD
   <!-- 参考模拟声明 -->
   <div style="
     position: absolute;
@@ -494,10 +1551,19 @@
     仅供参考模拟，非最终落地方案效果
   </div>
   <div class="iphone-frame">
+=======
+  <!-- iPhone 16 Pro 外壳 -->
+  <div class="iphone-frame">
+    <!-- 灵动岛 -->
+    <div class="dynamic-island">
+    </div>
+    <!-- 屏幕内容 -->
+>>>>>>> fe5f62df4d81643262b2048574366cf5d79a4acd
     <div class="screen">
       <div class="safe-area">
         <!-- 首页 -->
         <div id="home" class="page active">
+<<<<<<< HEAD
             <div class="page-header">
                 <h2>推荐任务</h2>
                 <!-- 搜索栏 -->
@@ -640,11 +1706,182 @@
                 <div class="item-meta">
                   <span>进行中</span>
                   <span>0.1km</span>
+=======
+          <div class="header">
+            <div class="logo">RunningMan</div>
+            <div style="display: flex; gap: 12px;">
+              <span style="color: #636366; font-size: 24px;">🔍</span>
+              <span style="color: #636366; font-size: 22px;">💬</span>
+            </div>
+          </div>
+          <div class="search-bar">
+            <input type="text" placeholder="搜索校园跑腿服务...">
+          </div>
+          <!-- 筛选栏 -->
+          <div class="filter-bar">
+            <div class="filter-item active" onclick="showFilterPanel('distance')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+              距离
+            </div>
+            <div class="filter-item" onclick="showFilterPanel('type')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              类型
+            </div>
+            <div class="filter-item" onclick="showFilterPanel('time')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              时间
+            </div>
+          </div>
+          <div class="grid">
+            <!-- 外卖跑腿 -->
+            <div class="card" onclick="showDetailPage('外卖跑腿', '麦当劳外卖', '取东门麦当劳套餐，需送到1教203', '3分钟前', 8)">
+              <div class="card-category">外卖</div>
+              <div class="card-content">
+                <div class="card-title">麦当劳外卖</div>
+                <div class="card-desc">取东门麦当劳套餐，需送到1教203</div>
+                <div class="card-footer">
+                  <span class="time-badge">3分钟前</span>
+                  <span class="reward">+8元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" onclick="showDetailPage('外卖跑腿', '奶茶外卖', '取西门喜茶，需送到图书馆三楼', '8分钟前', 10)">
+              <div class="card-category">外卖</div>
+              <div class="card-content">
+                <div class="card-title">奶茶外卖</div>
+                <div class="card-desc">取西门喜茶，需送到图书馆三楼</div>
+                <div class="card-footer">
+                  <span class="time-badge">8分钟前</span>
+                  <span class="reward">+10元</span>
+                </div>
+              </div>
+            </div>
+            <!-- 快递跑腿 -->
+            <div class="card" onclick="showDetailPage('快递跑腿', '京东快递', '取3#快递柜，需送到宿舍5栋203', '15分钟前', 5)">
+              <div class="card-category">快递</div>
+              <div class="card-content">
+                <div class="card-title">京东快递</div>
+                <div class="card-desc">取3#快递柜，需送到宿舍5栋203</div>
+                <div class="card-footer">
+                  <span class="time-badge">15分钟前</span>
+                  <span class="reward">+5元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" onclick="showDetailPage('快递跑腿', '顺丰快递', '取服务中心快递，需送到实验楼B座', '22分钟前', 7)">
+              <div class="card-category">快递</div>
+              <div class="card-content">
+                <div class="card-title">顺丰快递</div>
+                <div class="card-desc">取服务中心快递，需送到实验楼B座</div>
+                <div class="card-footer">
+                  <span class="time-badge">22分钟前</span>
+                  <span class="reward">+7元</span>
+                </div>
+              </div>
+            </div>
+            <!-- 送件跑腿 -->
+            <div class="card" onclick="showDetailPage('送件跑腿', '文件送达', '送教材到5教203，急需上课用', '30分钟前', 6)">
+              <div class="card-category">送件</div>
+              <div class="card-content">
+                <div class="card-title">文件送达</div>
+                <div class="card-desc">送教材到5教203，急需上课用</div>
+                <div class="card-footer">
+                  <span class="time-badge">30分钟前</span>
+                  <span class="reward">+6元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" onclick="showDetailPage('送件跑腿', '钥匙送达', '送宿舍钥匙到1教101，同学急用', '45分钟前', 4)">
+              <div class="card-category">送件</div>
+              <div class="card-content">
+                <div class="card-title">钥匙送达</div>
+                <div class="card-desc">送宿舍钥匙到1教101，同学急用</div>
+                <div class="card-footer">
+                  <span class="time-badge">45分钟前</span>
+                  <span class="reward">+4元</span>
+                </div>
+              </div>
+            </div>
+            <!-- 其他跑腿 -->
+            <div class="card" onclick="showDetailPage('其他跑腿', '打印资料', '代打印20页资料，送到图书馆', '1小时前', 4)">
+              <div class="card-category">其他</div>
+              <div class="card-content">
+                <div class="card-title">打印资料</div>
+                <div class="card-desc">代打印20页资料，送到图书馆</div>
+                <div class="card-footer">
+                  <span class="time-badge">1小时前</span>
+                  <span class="reward">+4元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" onclick="showDetailPage('其他跑腿', '取眼镜', '取眼镜店眼镜，需送到宿舍', '1.5小时前', 5)">
+              <div class="card-category">其他</div>
+              <div class="card-content">
+                <div class="card-title">取眼镜</div>
+                <div class="card-desc">取眼镜店眼镜，需送到宿舍</div>
+                <div class="card-footer">
+                  <span class="time-badge">1.5小时前</span>
+                  <span class="reward">+5元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" onclick="showDetailPage('外卖跑腿', '食堂外卖', '取三食堂黄焖鸡，送到3教305', '5分钟前', 6)">
+              <div class="card-category">外卖</div>
+              <div class="card-content">
+                <div class="card-title">食堂外卖</div>
+                <div class="card-desc">取三食堂黄焖鸡，送到3教305</div>
+                <div class="card-footer">
+                  <span class="time-badge">5分钟前</span>
+                  <span class="reward">+6元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" onclick="showDetailPage('快递跑腿', '菜鸟驿站', '取2#驿站快递，送到4栋402', '20分钟前', 4)">
+              <div class="card-category">快递</div>
+              <div class="card-content">
+                <div class="card-title">菜鸟驿站</div>
+                <div class="card-desc">取2#驿站快递，送到4栋402</div>
+                <div class="card-footer">
+                  <span class="time-badge">20分钟前</span>
+                  <span class="reward">+4元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" onclick="showDetailPage('送件跑腿', '送作业', '送同学作业到1教101，下课前急需', '35分钟前', 3)">
+              <div class="card-category">送件</div>
+              <div class="card-content">
+                <div class="card-title">送作业</div>
+                <div class="card-desc">送同学作业到1教101，下课前急需</div>
+                <div class="card-footer">
+                  <span class="time-badge">35分钟前</span>
+                  <span class="reward">+3元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" onclick="showDetailPage('其他跑腿', '买文具', '代买笔记本和笔，送到图书馆', '50分钟前', 5)">
+              <div class="card-category">其他</div>
+              <div class="card-content">
+                <div class="card-title">买文具</div>
+                <div class="card-desc">代买笔记本和笔，送到图书馆</div>
+                <div class="card-footer">
+                  <span class="time-badge">50分钟前</span>
+                  <span class="reward">+5元</span>
+>>>>>>> fe5f62df4d81643262b2048574366cf5d79a4acd
                 </div>
               </div>
             </div>
           </div>
         </div>
+<<<<<<< HEAD
         <!-- 发布 -->
         <div id="post" class="page">
             <div class="page-header">
@@ -790,6 +2027,468 @@
           <div class="nav-btn" data-page="profile">
             <div class="nav-icon">
               <svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-5.33 0-8 2.67-8 5v3h16v-3c0-2.33-2.67-5-8-5z"/></svg>
+=======
+        <!-- 商单详情页 -->
+        <div id="detail" class="page">
+          <div class="detail-header">
+            <div class="detail-back-btn" onclick="showPage('home')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6 6-6"></path>
+              </svg>
+            </div>
+            <div class="detail-title">商单详情</div>
+            <div class="detail-share-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+            </div>
+          </div>
+          <div class="detail-banner">
+            <div class="banner-content">
+              <div class="banner-title" id="detail-title">麦当劳外卖</div>
+              <div class="banner-desc" id="detail-desc">取东门麦当劳套餐，需送到1教203</div>
+            </div>
+          </div>
+          <div class="detail-info">
+            <div class="detail-price">
+              <div class="price-label">跑腿费用</div>
+              <div class="price-value" id="detail-reward">+8元</div>
+            </div>
+            <div class="detail-section">
+              <div class="section-title">订单信息</div>
+              <div class="detail-attributes">
+                <div class="attribute-item">
+                  <div class="attribute-label">订单类型</div>
+                  <div class="attribute-value" id="detail-type">外卖跑腿</div>
+                </div>
+                <div class="attribute-item">
+                  <div class="attribute-label">发布时间</div>
+                  <div class="attribute-value" id="detail-time">3分钟前</div>
+                </div>
+                <div class="attribute-item">
+                  <div class="attribute-label">取件地点</div>
+                  <div class="attribute-value">东门麦当劳</div>
+                </div>
+                <div class="attribute-item">
+                  <div class="attribute-label">送达地点</div>
+                  <div class="attribute-value">1教203</div>
+                </div>
+                <div class="attribute-item">
+                  <div class="attribute-label">期望时间</div>
+                  <div class="attribute-value">30分钟内</div>
+                </div>
+                <div class="attribute-item">
+                  <div class="attribute-label">物品类型</div>
+                  <div class="attribute-value">食品</div>
+                </div>
+              </div>
+            </div>
+            <div class="detail-section">
+              <div class="section-title">详细描述</div>
+              <div class="detail-description">
+                麦当劳外卖订单，需要取东门麦当劳的巨无霸套餐，饮料要可乐，不要加冰。送到1教203教室，同学正在上课，麻烦快一点。谢谢！
+              </div>
+            </div>
+            <div class="rider-profile">
+              <div class="rider-avatar">王</div>
+              <div class="rider-info">
+                <div class="rider-name">王同学</div>
+                <div class="rider-stats">
+                  <div class="rider-stat">接单 85</div>
+                  <div class="rider-stat">好评 98%</div>
+                  <div class="rider-stat">Lv.5</div>
+                </div>
+              </div>
+            </div>
+            <div class="detail-section">
+              <div class="section-title">用户评价</div>
+              <div class="detail-comments">
+                <div class="comment-item">
+                  <div class="comment-avatar">张</div>
+                  <div class="comment-content">
+                    <div class="comment-header">
+                      <div class="comment-author">张同学</div>
+                      <div class="comment-time">2023-09-20</div>
+                    </div>
+                    <div class="comment-text">跑腿速度很快，很负责，东西完好无损，值得推荐！</div>
+                  </div>
+                </div>
+                <div class="comment-item">
+                  <div class="comment-avatar">李</div>
+                  <div class="comment-content">
+                    <div class="comment-header">
+                      <div class="comment-author">李同学</div>
+                      <div class="comment-time">2023-09-18</div>
+                    </div>
+                    <div class="comment-text">非常靠谱的跑腿员，沟通顺畅，顺利完成任务，下次还会找他！</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="detail-footer">
+            <div class="detail-btn btn-contact">聊一聊</div>
+            <div class="detail-btn btn-accept">接下这个单</div>
+          </div>
+        </div>
+        <!-- 筛选面板 -->
+        <div class="filter-panel" id="filterPanel">
+          <div class="filter-panel-header">
+            <div class="filter-panel-title" id="filterTitle">距离筛选</div>
+            <div class="filter-close-btn" onclick="hideFilterPanel()">
+              ×
+            </div>
+          </div>
+          <div class="filter-section" id="distanceFilter">
+            <div class="filter-options">
+              <div class="filter-option active" onclick="applyFilter(this, 'distance', '500m')">500m内</div>
+              <div class="filter-option" onclick="applyFilter(this, 'distance', '1km')">1km内</div>
+              <div class="filter-option" onclick="applyFilter(this, 'distance', '2km')">2km内</div>
+              <div class="filter-option" onclick="applyFilter(this, 'distance', 'all')">全部</div>
+            </div>
+          </div>
+          <div class="filter-section" id="typeFilter" style="display:none;">
+            <div class="filter-options">
+              <div class="filter-option active" onclick="applyFilter(this, 'type', 'all')">全部类型</div>
+              <div class="filter-option" onclick="applyFilter(this, 'type', '外卖')">外卖</div>
+              <div class="filter-option" onclick="applyFilter(this, 'type', '快递')">快递</div>
+              <div class="filter-option" onclick="applyFilter(this, 'type', '送件')">送件</div>
+              <div class="filter-option" onclick="applyFilter(this, 'type', '其他')">其他</div>
+            </div>
+          </div>
+          <div class="filter-section" id="timeFilter" style="display:none;">
+            <div class="filter-options">
+              <div class="filter-option active" onclick="applyFilter(this, 'time', '30min')">30分钟内</div>
+              <div class="filter-option" onclick="applyFilter(this, 'time', '1h')">1小时内</div>
+              <div class="filter-option" onclick="applyFilter(this, 'time', '2h')">2小时内</div>
+              <div class="filter-option" onclick="applyFilter(this, 'time', 'all')">全部</div>
+            </div>
+          </div>
+          <div class="filter-actions">
+            <div class="filter-btn filter-reset" onclick="resetFilters()">重置</div>
+            <div class="filter-btn filter-apply" onclick="hideFilterPanel()">确定</div>
+          </div>
+        </div>
+        <!-- 发布页 -->
+        <div id="post" class="page">
+          <h2 style="text-align: center; margin: 20px 0 10px; color: #1d1d1f; font-weight: 600;">发布跑腿需求</h2>
+          <p style="text-align: center; color: #636366; font-size: 14px; margin-bottom: 20px;">让校园跑腿员为您服务</p>
+          <div class="form-group">
+            <label for="item">物件信息</label>
+            <input id="item" type="text" value="取麦当劳(东门)" placeholder="详细描述需要跑腿的内容">
+          </div>
+          <div class="form-group">
+            <label for="type">跑腿类型</label>
+            <select id="type">
+              <option>外卖跑腿</option>
+              <option selected>快递跑腿</option>
+              <option>送件跑腿</option>
+              <option>其他跑腿</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="location">跑腿位置</label>
+            <input id="location" type="text" value="图书馆南门" placeholder="系统将自动定位当前位置">
+          </div>
+          <div class="form-group">
+            <label for="reward">打赏金额 (元)</label>
+            <input id="reward" type="number" value="8" min="1" max="100" placeholder="请输入打赏金额">
+          </div>
+          <button class="submit-btn" onclick="showPage('home')">发布需求</button>
+          <div style="text-align: center; margin-top: 15px; color: #636366; font-size: 13px;">
+            提示：跑腿员接单后，您将支付打赏金额
+          </div>
+        </div>
+        <!-- 消息页 -->
+        <div id="messages" class="page">
+          <h2 style="margin: 20px 0 10px; color: #1d1d1f; font-weight: 600;">消息</h2>
+          <!-- 进行中订单 -->
+          <div class="active-order-card" style="position: relative;">
+            <div class="active-order-badge">1</div>
+            <div class="order-status">进行中 • 预计12分钟后送达</div>
+            <div class="map-container">
+              <div class="map">
+                <div class="campus-map"></div>
+                <div class="location-marker"></div>
+              </div>
+            </div>
+            <div class="rider-info">
+              <div class="rider-avatar">张</div>
+              <div>
+                <div style="font-weight: 600; color: #1d1d1f;">跑腿员：张同学</div>
+                <div style="color: #636366; font-size: 13px;">距离您 150m • 正在前往图书馆</div>
+              </div>
+            </div>
+            <button class="submit-btn" style="background: #4CAF50; box-shadow: 0 4px 15px rgba(76, 175, 76, 0.3);" 
+                    onclick="showPage('order-tracking')">
+              联系跑腿员
+            </button>
+          </div>
+          <div class="history-section">
+            <h3 class="section-title">历史订单</h3>
+            <div class="card" style="margin-bottom: 12px;">
+              <div class="card-content">
+                <div class="card-title">外卖跑腿</div>
+                <div class="card-desc">取东门麦当劳，送到1教203</div>
+                <div class="card-footer">
+                  <span class="time-badge">今天 09:15</span>
+                  <span class="reward">+8元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="margin-bottom: 12px;">
+              <div class="card-content">
+                <div class="card-title">快递跑腿</div>
+                <div class="card-desc">取京东3#柜，送到宿舍5栋203</div>
+                <div class="card-footer">
+                  <span class="time-badge">昨天 14:30</span>
+                  <span class="reward">+5元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="margin-bottom: 12px;">
+              <div class="card-content">
+                <div class="card-title">送件跑腿</div>
+                <div class="card-desc">送教材到5教203</div>
+                <div class="card-footer">
+                  <span class="time-badge">昨天 10:45</span>
+                  <span class="reward">+6元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="margin-bottom: 12px;">
+              <div class="card-content">
+                <div class="card-title">其他跑腿</div>
+                <div class="card-desc">代打印20页资料</div>
+                <div class="card-footer">
+                  <span class="time-badge">09-15 13:20</span>
+                  <span class="reward">+4元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="margin-bottom: 12px;">
+              <div class="card-content">
+                <div class="card-title">外卖跑腿</div>
+                <div class="card-desc">取西门奶茶，送到图书馆</div>
+                <div class="card-footer">
+                  <span class="time-badge">09-14 18:10</span>
+                  <span class="reward">+10元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="margin-bottom: 12px;">
+              <div class="card-content">
+                <div class="card-title">快递跑腿</div>
+                <div class="card-desc">取顺丰服务中心</div>
+                <div class="card-footer">
+                  <span class="time-badge">09-14 11:05</span>
+                  <span class="reward">+7元</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="margin-bottom: 12px;">
+              <div class="card-content">
+                <div class="card-title">送件跑腿</div>
+                <div class="card-desc">送钥匙到1教101</div>
+                <div class="card-footer">
+                  <span class="time-badge">09-13 15:30</span>
+                  <span class="reward">+4元</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 订单跟踪页 -->
+        <div id="order-tracking" class="page">
+          <div class="detail-header">
+            <div class="detail-back-btn" onclick="showPage('messages')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6 6-6"></path>
+              </svg>
+            </div>
+            <div class="detail-title">订单跟踪</div>
+            <div class="detail-share-btn" onclick="showPage('chat')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="order-status">进行中 • 预计12分钟后送达</div>
+          <div class="map-container">
+            <div class="map">
+              <div class="campus-map"></div>
+              <div class="location-marker"></div>
+            </div>
+          </div>
+          <div class="rider-info">
+            <div class="rider-avatar">张</div>
+            <div>
+              <div style="font-weight: 600; color: #1d1d1f;">跑腿员：张同学</div>
+              <div style="color: #636366; font-size: 13px;">距离您 150m • 正在前往图书馆</div>
+            </div>
+          </div>
+          <button class="submit-btn" style="background: #4CAF50; box-shadow: 0 4px 15px rgba(76, 175, 76, 0.3);" 
+                  onclick="showPage('chat')">
+            联系跑腿员
+          </button>
+          <div class="detail-section" style="margin-top: 20px;">
+            <div class="section-title">订单详情</div>
+            <div class="detail-attributes">
+              <div class="attribute-item">
+                <div class="attribute-label">订单类型</div>
+                <div class="attribute-value">外卖跑腿</div>
+              </div>
+              <div class="attribute-item">
+                <div class="attribute-label">取件地点</div>
+                <div class="attribute-value">东门麦当劳</div>
+              </div>
+              <div class="attribute-item">
+                <div class="attribute-label">送达地点</div>
+                <div class="attribute-value">1教203</div>
+              </div>
+              <div class="attribute-item">
+                <div class="attribute-label">物品类型</div>
+                <div class="attribute-value">食品</div>
+              </div>
+              <div class="attribute-item">
+                <div class="attribute-label">订单时间</div>
+                <div class="attribute-value">今天 09:40</div>
+              </div>
+              <div class="attribute-item">
+                <div class="attribute-label">订单状态</div>
+                <div class="attribute-value">配送中</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 我的页 -->
+        <div id="profile" class="page">
+          <div class="settings-menu">
+            <div class="settings-btn" onclick="toggleSettingsMenu()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="4" y1="12" x2="20" y2="12"></line>
+                <line x1="4" y1="6" x2="20" y2="6"></line>
+                <line x1="4" y1="18" x2="20" y2="18"></line>
+              </svg>
+            </div>
+            <div class="settings-dropdown" id="settingsDropdown">
+              <div class="settings-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>账户设置</span>
+                <span class="arrow">›</span>
+              </div>
+              <div class="settings-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span>消息通知</span>
+                <span class="arrow">›</span>
+              </div>
+              <div class="settings-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <rect x="7" y="7" width="3" height="9"></rect>
+                  <rect x="14" y="7" width="3" height="5"></rect>
+                </svg>
+                <span>隐私设置</span>
+                <span class="arrow">›</span>
+              </div>
+              <div class="settings-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span>帮助中心</span>
+                <span class="arrow">›</span>
+              </div>
+              <div class="settings-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>退出登录</span>
+                <span class="arrow">›</span>
+              </div>
+            </div>
+          </div>
+          <div class="profile-header">
+            <div class="avatar">L</div>
+            <h2 style="color: #1d1d1f; font-weight: 600;">李同学</h2>
+            <div class="level-badge">跑腿员 Lv.4</div>
+            <p style="color: #636366; font-size: 14px; margin-top: 8px;">校园跑腿达人 • 诚信可靠</p>
+          </div>
+          <div class="stats">
+            <div class="stat-item">
+              <div class="stat-value">24</div>
+              <div class="stat-label">本周接单</div>
+            </div>
+            <div class="stat-item" style="border-left: 1px solid #f0f0f0; border-right: 1px solid #f0f0f0;">
+              <div class="stat-value">￥386</div>
+              <div class="stat-label">今日收入</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">142</div>
+              <div class="stat-label">历史订单</div>
+            </div>
+          </div>
+          <div class="card" style="margin-top: 10px;">
+            <div class="card-content">
+              <div class="card-title">进行中订单</div>
+              <div class="card-desc">外卖跑腿 • 麦当劳(东门)</div>
+              <div class="card-footer">
+                <span class="time-badge">进行中</span>
+                <span class="reward">+8元</span>
+              </div>
+            </div>
+          </div>
+          <button class="history-orders-btn" onclick="showHistoryOrders()">历史订单</button>
+        </div>
+        <!-- 底部导航 -->
+        <div class="nav">
+          <div class="nav-btn active" data-page="home" onclick="showPage('home')">
+            <div class="nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+            <div>首页</div>
+          </div>
+          <div class="nav-btn" data-page="post" onclick="showPage('post')">
+            <div class="nav-icon" style="font-size: 26px; line-height: 22px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="12" x2="12" y2="12"></line>
+              </svg>
+            </div>
+            <div>发布</div>
+          </div>
+          <div class="nav-btn" data-page="messages" onclick="showPage('messages')">
+            <div class="nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <div>信息</div>
+          </div>
+          <div class="nav-btn" data-page="profile" onclick="showPage('profile')">
+            <div class="nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+>>>>>>> fe5f62df4d81643262b2048574366cf5d79a4acd
             </div>
             <div>我的</div>
           </div>
@@ -798,6 +2497,7 @@
     </div>
   </div>
   <script>
+<<<<<<< HEAD
     (function(){
       const pages = document.querySelectorAll('.page');
       const navBtns = document.querySelectorAll('.nav-btn');
@@ -902,6 +2602,220 @@
       });
       // --- 新增结束 ---
     })();
+=======
+    // 页面切换功能 - 重构版（确保profile页面优先级）
+    function showPage(pageId) {
+      console.log("Navigating to page:", pageId);
+      
+      // 验证pageId是否有效
+      if (!pageId || typeof pageId !== 'string') {
+        console.error("Invalid pageId:", pageId);
+        return;
+      }
+      
+      // 隐藏所有页面
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      
+      // 显示目标页面
+      const targetPage = document.getElementById(pageId);
+      if (targetPage) {
+        targetPage.classList.add('active');
+      } else {
+        console.error("Page not found:", pageId);
+        // 如果目标页面不存在，返回首页
+        if (pageId !== 'home') {
+          showPage('home');
+        }
+        return;
+      }
+      
+      // 更新导航状态 - 通过data-page属性匹配
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        const btnPage = btn.getAttribute('data-page');
+        if (btnPage === pageId) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      
+      // 滚动到顶部
+      const safeArea = document.querySelector('.safe-area');
+      if (safeArea) {
+        safeArea.scrollTop = 0;
+      }
+      
+      // 特别处理profile页面的优先级
+      if (pageId === 'profile') {
+        console.log("Profile page loaded successfully");
+        // 确保设置菜单收起
+        const settingsDropdown = document.getElementById('settingsDropdown');
+        if (settingsDropdown && settingsDropdown.classList.contains('active')) {
+          settingsDropdown.classList.remove('active');
+        }
+      }
+    }
+    
+    // 显示商单详情页
+    function showDetailPage(type, title, desc, time, reward) {
+      document.getElementById('detail-type').textContent = type;
+      document.getElementById('detail-title').textContent = title;
+      document.getElementById('detail-desc').textContent = desc;
+      document.getElementById('detail-time').textContent = time;
+      document.getElementById('detail-reward').textContent = '+' + reward + '元';
+      showPage('detail');
+    }
+    
+    // 筛选面板相关功能
+    function showFilterPanel(filterType) {
+      // 重置所有筛选选项
+      document.querySelectorAll('.filter-option').forEach(option => {
+        option.classList.remove('active');
+      });
+      // 设置默认选中
+      if (filterType === 'distance') {
+        document.querySelector('#distanceFilter .filter-option').classList.add('active');
+      } else if (filterType === 'type') {
+        document.querySelector('#typeFilter .filter-option').classList.add('active');
+      } else if (filterType === 'time') {
+        document.querySelector('#timeFilter .filter-option').classList.add('active');
+      }
+      // 显示对应筛选内容
+      document.getElementById('distanceFilter').style.display = 'none';
+      document.getElementById('typeFilter').style.display = 'none';
+      document.getElementById('timeFilter').style.display = 'none';
+      if (filterType === 'distance') {
+        document.getElementById('distanceFilter').style.display = 'block';
+        document.getElementById('filterTitle').textContent = '距离筛选';
+      } else if (filterType === 'type') {
+        document.getElementById('typeFilter').style.display = 'block';
+        document.getElementById('filterTitle').textContent = '类型筛选';
+      } else if (filterType === 'time') {
+        document.getElementById('timeFilter').style.display = 'block';
+        document.getElementById('filterTitle').textContent = '时间筛选';
+      }
+      // 显示筛选面板
+      document.getElementById('filterPanel').classList.add('active');
+    }
+    
+    function hideFilterPanel() {
+      document.getElementById('filterPanel').classList.remove('active');
+    }
+    
+    function applyFilter(element, filterType, value) {
+      // 移除所有同类型选项的active类
+      element.parentElement.querySelectorAll('.filter-option').forEach(option => {
+        option.classList.remove('active');
+      });
+      // 添加active类到当前选项
+      element.classList.add('active');
+      // 更新筛选栏显示
+      if (filterType === 'distance') {
+        document.querySelector('.filter-bar .filter-item:nth-child(1)').innerHTML = 
+          element.innerHTML;
+      } else if (filterType === 'type' && value !== 'all') {
+        document.querySelector('.filter-bar .filter-item:nth-child(2)').innerHTML = 
+          `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>${value}`;
+      } else if (filterType === 'time' && value !== 'all') {
+        document.querySelector('.filter-bar .filter-item:nth-child(3)').innerHTML = 
+          `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>${value}`;
+      }
+    }
+    
+    function resetFilters() {
+      // 重置所有筛选选项
+      document.querySelectorAll('.filter-option').forEach(option => {
+        if (option.parentElement.parentElement.id === 'distanceFilter') {
+          option.classList.toggle('active', option.textContent === '500m内');
+        } else if (option.parentElement.parentElement.id === 'typeFilter') {
+          option.classList.toggle('active', option.textContent === '全部类型');
+        } else if (option.parentElement.parentElement.id === 'timeFilter') {
+          option.classList.toggle('active', option.textContent === '30分钟内');
+        }
+      });
+      // 重置筛选栏显示
+      document.querySelector('.filter-bar .filter-item:nth-child(1)').innerHTML = 
+        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 6v6l4 2"></path>
+        </svg>距离`;
+      document.querySelector('.filter-bar .filter-item:nth-child(2)').innerHTML = 
+        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>类型`;
+      document.querySelector('.filter-bar .filter-item:nth-child(3)').innerHTML = 
+        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>时间`;
+    }
+    
+    // 设置菜单
+    function toggleSettingsMenu() {
+      const menu = document.getElementById('settingsDropdown');
+      menu.classList.toggle('active');
+    }
+    
+    // 显示历史订单
+    function showHistoryOrders() {
+      alert('历史订单页面已打开');
+      // 实际应用中这里会跳转到历史订单页面
+    }
+    
+    // 模拟实时定位
+    function startLocationTracking() {
+      const marker = document.querySelector('.location-marker');
+      if (!marker) return;
+      let posX = 45;
+      let posY = 55;
+      setInterval(() => {
+        // 随机移动但保持在校园范围内
+        posX = Math.min(90, Math.max(10, posX + (Math.random() - 0.5) * 6));
+        posY = Math.min(85, Math.max(15, posY + (Math.random() - 0.5) * 6));
+        marker.style.left = posX + '%';
+        marker.style.top = posY + '%';
+      }, 2000);
+    }
+    
+    // 点击页面其他区域关闭设置菜单
+    document.addEventListener('click', function(event) {
+      const settingsMenu = document.getElementById('settingsDropdown');
+      const settingsBtn = document.querySelector('.settings-btn');
+      if (!settingsMenu.contains(event.target) && 
+          !settingsBtn.contains(event.target) && 
+          settingsMenu.classList.contains('active')) {
+        settingsMenu.classList.remove('active');
+      }
+    });
+    
+    // 页面加载完成后启动定位
+    document.addEventListener('DOMContentLoaded', () => {
+      startLocationTracking();
+      // 初始设置"首页"为激活状态
+      document.querySelector('.nav-btn:nth-child(1)').classList.add('active');
+      // 点击筛选面板外部关闭面板
+      document.addEventListener('click', function(event) {
+        const filterPanel = document.getElementById('filterPanel');
+        const filterItems = document.querySelectorAll('.filter-item');
+        if (filterPanel.classList.contains('active') && 
+            !filterPanel.contains(event.target) &&
+            !Array.from(filterItems).some(item => item.contains(event.target))) {
+          filterPanel.classList.remove('active');
+        }
+      });
+      // 确保设置菜单默认收起
+      document.getElementById('settingsDropdown').classList.remove('active');
+    });
+>>>>>>> fe5f62df4d81643262b2048574366cf5d79a4acd
   </script>
 </body>
 </html>

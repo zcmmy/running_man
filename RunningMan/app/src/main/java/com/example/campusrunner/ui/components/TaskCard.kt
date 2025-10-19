@@ -59,7 +59,7 @@ fun GridTaskCard(
                 Icon(
                     imageVector = getTaskTypeIcon(task.type),
                     contentDescription = task.getTypeText(),
-                    modifier = Modifier.size(56.dp), // 从48dp增加到56dp，图标更大
+                    modifier = Modifier.size(48.dp), // 从48dp增加到56dp，图标更大
                     tint = MaterialTheme.colorScheme.primary
                 )
             }

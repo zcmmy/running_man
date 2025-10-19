@@ -20,12 +20,9 @@ import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.DpOffset
@@ -44,30 +42,34 @@ import androidx.compose.ui.unit.sp
 fun FilterBar(
     modifier: Modifier = Modifier
 ) {
-    EnhancedCard(
+    // 完全按照demo.html的样式：白色背景，圆角，阴影，精确的padding
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 14.dp, vertical = 8.dp)
+            .shadow(
+                elevation = 2.dp,
+                shape = RoundedCornerShape(12.dp),
+                clip = true
+            )
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(8.dp) // 精确控制内边距
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // 位置筛选
             EnhancedFilterDropdown(
                 items = listOf(
                     FilterItem("位置", Icons.Filled.LocationOn),
-                    FilterItem("韵苑学生公寓", Icons.Filled.LocationOn),
-                    FilterItem("紫菘学生公寓", Icons.Filled.LocationOn),
-                    FilterItem("沁苑学生公寓", Icons.Filled.LocationOn),
-                    FilterItem("西十二教学楼", Icons.Filled.LocationOn),
-                    FilterItem("东九教学楼", Icons.Filled.LocationOn),
+                    FilterItem("校门口", Icons.Filled.LocationOn),
                     FilterItem("图书馆", Icons.Filled.LocationOn),
-                    FilterItem("西区食堂", Icons.Filled.LocationOn),
-                    FilterItem("东区食堂", Icons.Filled.LocationOn),
-                    FilterItem("校大门", Icons.Filled.LocationOn)
+                    FilterItem("教学楼", Icons.Filled.LocationOn),
+                    FilterItem("宿舍区", Icons.Filled.LocationOn)
                 ),
                 selectedIndex = 0,
                 modifier = Modifier.weight(1f)
@@ -92,7 +94,6 @@ fun FilterBar(
                     FilterItem("外卖", Icons.Filled.Restaurant),
                     FilterItem("快递", Icons.Filled.LocalShipping),
                     FilterItem("打印", Icons.Filled.Print),
-                    FilterItem("购物", Icons.Filled.ShoppingCart),
                     FilterItem("其他", Icons.Filled.FilterList)
                 ),
                 selectedIndex = 0,
@@ -119,34 +120,27 @@ fun EnhancedFilterDropdown(
     Box(
         modifier = modifier
     ) {
-        // 自定义下拉触发器
+        // 筛选项样式 - 精确按照demo设计
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(8.dp))
                 .clickable { expanded = true }
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                    color = Color(0xFFf5f5f5), // 使用demo中的背景色
                     shape = RoundedCornerShape(8.dp)
                 )
-                .padding(horizontal = 12.dp, vertical = 8.dp)
+                .padding(horizontal = 8.dp, vertical = 8.dp) // 精确控制内边距
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Icon(
-                    imageVector = selectedItem.icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-
                 Text(
                     text = selectedItem.text,
                     style = MaterialTheme.typography.labelMedium.copy(
-                        fontSize = 12.sp
+                        fontSize = 12.sp // 精确字体大小
                     ),
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f),
@@ -176,24 +170,13 @@ fun EnhancedFilterDropdown(
             items.forEachIndexed { index, item ->
                 DropdownMenuItem(
                     text = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = null,
-                                modifier = Modifier.size(14.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                text = item.text,
-                                modifier = Modifier.padding(start = 6.dp),
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontSize = 12.sp
-                                ),
-                                maxLines = 1
-                            )
-                        }
+                        Text(
+                            text = item.text,
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontSize = 12.sp
+                            ),
+                            maxLines = 1
+                        )
                     },
                     onClick = {
                         selectedItem = item

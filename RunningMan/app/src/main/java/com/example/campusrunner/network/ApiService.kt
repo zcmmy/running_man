@@ -13,7 +13,8 @@ interface ApiService {
         @Query("limit") limit: Int = 20,
         @Query("type") type: String? = null,
         @Query("location") location: String? = null,
-        @Query("status") status: String? = null
+        @Query("status") status: String? = null,
+        @Query("search") search: String? = null // 新增搜索参数
     ): Response<List<Task>>
 
     @GET("tasks/{id}")
@@ -54,6 +55,22 @@ interface ApiService {
 
     @PUT("user/profile")
     suspend fun updateUserProfile(@Body profile: UserProfile): Response<ApiResponse<String>>
+
+    // 搜索相关API - 新增
+    @GET("search/history")
+    suspend fun getSearchHistory(
+        @Query("userId") userId: String,
+        @Query("limit") limit: Int = 10
+    ): Response<SearchHistoryResponse>
+
+    @POST("search/history")
+    suspend fun addSearchHistory(@Body request: SearchHistoryRequest): Response<ApiResponse<String>>
+
+    @DELETE("search/history/{id}")
+    suspend fun deleteSearchHistory(@Path("id") historyId: String): Response<ApiResponse<String>>
+
+    @DELETE("search/history")
+    suspend fun clearSearchHistory(@Query("userId") userId: String): Response<ApiResponse<String>>
 }
 
 // 请求和响应数据类

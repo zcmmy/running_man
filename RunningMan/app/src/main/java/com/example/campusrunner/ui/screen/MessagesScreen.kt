@@ -45,12 +45,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.campusrunner.ui.components.LiveOrderCard
+import com.example.campusrunner.viewmodels.MessagesViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessagesScreen(navController: NavController? = null) {
-    val viewModel: com.example.campusrunner.ui.viewmodels.MessagesViewModel = viewModel()
+    val viewModel: MessagesViewModel = viewModel()
     val chatSessions = viewModel.chatSessionsState.value
     val systemMessages = viewModel.systemMessagesState.value
     val liveOrder = viewModel.liveOrderState.value

@@ -18,7 +18,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Star
@@ -46,7 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.campusrunner.ui.viewmodels.TaskDetailViewModel
+import com.example.campusrunner.viewmodels.AcceptTaskState
+import com.example.campusrunner.viewmodels.TaskDetailViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,12 +74,12 @@ fun TaskDetailScreen(
     // 处理接单状态变化
     LaunchedEffect(acceptTaskState) {
         when (acceptTaskState) {
-            is com.example.campusrunner.ui.viewmodels.AcceptTaskState.Success -> {
+            is AcceptTaskState.Success -> {
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar("接单成功！")
                 }
             }
-            is com.example.campusrunner.ui.viewmodels.AcceptTaskState.Error -> {
+            is AcceptTaskState.Error -> {
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar(acceptTaskState.message)
                 }
@@ -173,7 +173,7 @@ fun TaskDetailScreen(
 fun TaskDetailContent(
     task: com.example.campusrunner.model.Task,
     onAcceptTask: () -> Unit,
-    acceptTaskState: com.example.campusrunner.ui.viewmodels.AcceptTaskState
+    acceptTaskState: AcceptTaskState
 ) {
     Column(
         modifier = Modifier
@@ -445,7 +445,7 @@ fun PublisherInfoCard(task: com.example.campusrunner.model.Task) {
 fun ActionButtons(
     task: com.example.campusrunner.model.Task,
     onAcceptTask: () -> Unit,
-    acceptTaskState: com.example.campusrunner.ui.viewmodels.AcceptTaskState
+    acceptTaskState: AcceptTaskState
 ) {
     Column(
         modifier = Modifier
@@ -459,9 +459,9 @@ fun ActionButtons(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    enabled = acceptTaskState !is com.example.campusrunner.ui.viewmodels.AcceptTaskState.Loading
+                    enabled = acceptTaskState !is AcceptTaskState.Loading
                 ) {
-                    if (acceptTaskState is com.example.campusrunner.ui.viewmodels.AcceptTaskState.Loading) {
+                    if (acceptTaskState is AcceptTaskState.Loading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(20.dp),
                             color = Color.White

@@ -1,13 +1,10 @@
-package com.example.campusrunner.ui.viewmodels
+package com.example.campusrunner.viewmodels
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.campusrunner.data.TaskRepository
 import com.example.campusrunner.model.Task
-import com.example.campusrunner.model.TaskStatus
-import kotlinx.coroutines.launch
 
 /**
  * 任务详情ViewModel - 管理任务详情页面的状态和业务逻辑

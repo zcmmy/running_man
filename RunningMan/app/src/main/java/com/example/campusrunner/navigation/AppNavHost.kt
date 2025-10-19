@@ -35,6 +35,9 @@ import com.example.campusrunner.ui.screens.MessagesScreen
 import com.example.campusrunner.ui.screens.PostScreen
 import com.example.campusrunner.ui.screens.ProfileScreen
 import com.example.campusrunner.ui.screens.TaskDetailScreen
+import androidx.compose.material3.Scaffold
+import androidx.navigation.compose.composable
+import com.example.campusrunner.ui.screens.SearchScreen // 新增导入
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -135,6 +138,10 @@ fun AppNavHost() {
             }
             composable(Destinations.Profile) {
                 ProfileScreen(navController = navController)
+            }
+            // 在现有的 composable 后面添加搜索页面
+            composable(Destinations.Search) {
+                SearchScreen(navController = navController)
             }
 
             // 任务详情页面

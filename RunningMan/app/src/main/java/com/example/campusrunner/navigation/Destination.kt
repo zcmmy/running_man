@@ -8,6 +8,7 @@ object Destinations {
     const val Detail = "detail"
     const val Chat = "chat"
     const val OrderTracking = "orderTracking"
+    const val Search = "search"
 
     // 带参数的路径
     object DetailWithArgs {

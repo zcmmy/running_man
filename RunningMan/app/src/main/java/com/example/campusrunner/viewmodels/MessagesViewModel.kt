@@ -1,4 +1,4 @@
-package com.example.campusrunner.ui.viewmodels
+package com.example.campusrunner.viewmodels
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

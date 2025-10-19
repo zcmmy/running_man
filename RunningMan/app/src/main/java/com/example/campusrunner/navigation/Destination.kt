@@ -9,6 +9,7 @@ object Destinations {
     const val Chat = "chat"
     const val OrderTracking = "orderTracking"
     const val Search = "search"
+    const val Login = "login" // 添加登录页面路由
 
     // 带参数的路径
     object DetailWithArgs {

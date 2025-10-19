@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import com.example.campusrunner.data.UserRepository
 import com.example.campusrunner.navigation.AppNavHost
 import com.example.campusrunner.theme.CampusRunnerTheme
 import com.example.campusrunner.utils.PermissionUtils
@@ -40,6 +41,9 @@ class MainActivity : ComponentActivity() {
 
         // 检查并请求权限
         checkAndRequestPermissions()
+
+        // 初始化用户状态检查
+        UserRepository.checkLoginStatus()
 
         setContent {
             CampusRunnerTheme {

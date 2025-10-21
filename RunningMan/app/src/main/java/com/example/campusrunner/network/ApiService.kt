@@ -6,16 +6,7 @@ import retrofit2.http.*
 
 interface ApiService {
 
-    // 任务相关API
-    @GET("tasks")
-    suspend fun getTasks(
-        @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 20,
-        @Query("type") type: String? = null,
-        @Query("location") location: String? = null,
-        @Query("status") status: String? = null,
-        @Query("search") search: String? = null // 新增搜索参数
-    ): Response<List<Task>>
+    // ===== 任务相关API =====
 
     /**
      * 功能：获取任务列表
@@ -35,9 +26,15 @@ interface ApiService {
      *   }
      * ]
      */
-
-    @GET("tasks/{id}")
-    suspend fun getTaskDetail(@Path("id") taskId: String): Response<Task>
+    @GET("tasks")
+    suspend fun getTasks(
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 20,
+        @Query("type") type: String? = null,
+        @Query("location") location: String? = null,
+        @Query("status") status: String? = null,
+        @Query("search") search: String? = null
+    ): Response<List<Task>>
 
     /**
      * 功能：获取单个任务详情
@@ -46,9 +43,8 @@ interface ApiService {
      * GET /api/tasks/1
      * 响应：单个Task对象的完整信息
      */
-
-    @POST("tasks/{id}/accept")
-    suspend fun acceptTask(@Path("id") taskId: String): Response<ApiResponse<String>>
+    @GET("tasks/{id}")
+    suspend fun getTaskDetail(@Path("id") taskId: String): Response<Task>
 
     /**
      * 功能：接单操作
@@ -63,9 +59,8 @@ interface ApiService {
      *   "data": "订单已接受"
      * }
      */
-
-    @POST("tasks")
-    suspend fun createTask(@Body taskRequest: TaskRequest): Response<ApiResponse<String>>
+    @POST("tasks/{id}/accept")
+    suspend fun acceptTask(@Path("id") taskId: String): Response<ApiResponse<String>>
 
     /**
      * 功能：发布新任务
@@ -90,10 +85,10 @@ interface ApiService {
      *   "data": "任务ID：12345"
      * }
      */
+    @POST("tasks")
+    suspend fun createTask(@Body taskRequest: TaskRequest): Response<ApiResponse<String>>
 
-    // 消息相关API
-    @GET("chats/sessions")
-    suspend fun getChatSessions(): Response<List<ChatSession>>
+    // ===== 消息相关API =====
 
     /**
      * 功能：获取用户的所有聊天会话列表
@@ -115,9 +110,8 @@ interface ApiService {
      *   }
      * ]
      */
-
-    @GET("chats/{orderId}/messages")
-    suspend fun getChatMessages(@Path("orderId") orderId: String): Response<List<ChatMessage>>
+    @GET("chats/sessions")
+    suspend fun getChatSessions(): Response<List<ChatSession>>
 
     /**
      * 功能：获取指定订单的聊天消息历史
@@ -138,16 +132,12 @@ interface ApiService {
      *   }
      * ]
      */
-
-    @POST("chats/{orderId}/messages")
-    suspend fun sendMessage(
-        @Path("orderId") orderId: String,
-        @Body messageRequest: MessageRequest
-    ): Response<ApiResponse<String>>
+    @GET("chats/{orderId}/messages")
+    suspend fun getChatMessages(@Path("orderId") orderId: String): Response<List<ChatMessage>>
 
     /**
      * 功能：发送聊天消息
-     * 调用位置：MessageRepository.sendMessage()
+     * 调用位置：MessageRepository.sendMessage(), LiveOrderRepository.sendMessageToRunner()
      * 后端实现示例：
      * POST /api/chats/1/messages
      * 请求体：
@@ -162,9 +152,11 @@ interface ApiService {
      *   "data": "消息ID：msg123"
      * }
      */
-
-    @GET("messages/system")
-    suspend fun getSystemMessages(): Response<List<Message>>
+    @POST("chats/{orderId}/messages")
+    suspend fun sendMessage(
+        @Path("orderId") orderId: String,
+        @Body messageRequest: MessageRequest
+    ): Response<ApiResponse<String>>
 
     /**
      * 功能：获取系统消息列表
@@ -186,10 +178,10 @@ interface ApiService {
      *   }
      * ]
      */
+    @GET("messages/system")
+    suspend fun getSystemMessages(): Response<List<Message>>
 
-    // 实时订单相关API
-    @GET("orders/current")
-    suspend fun getCurrentOrders(): Response<List<LiveOrder>>
+    // ===== 实时订单相关API =====
 
     /**
      * 功能：获取用户当前的实时订单（进行中的订单）
@@ -214,9 +206,8 @@ interface ApiService {
      *   }
      * ]
      */
-
-    @GET("orders/{orderId}/tracking")
-    suspend fun getOrderTracking(@Path("orderId") orderId: String): Response<LiveOrder>
+    @GET("orders/current")
+    suspend fun getCurrentOrders(): Response<List<LiveOrder>>
 
     /**
      * 功能：获取指定订单的实时跟踪信息
@@ -225,10 +216,10 @@ interface ApiService {
      * GET /api/orders/1/tracking
      * 响应：单个LiveOrder对象的完整信息
      */
+    @GET("orders/{orderId}/tracking")
+    suspend fun getOrderTracking(@Path("orderId") orderId: String): Response<LiveOrder>
 
-    // 用户相关API
-    @GET("user/profile")
-    suspend fun getUserProfile(): Response<UserProfile>
+    // ===== 用户相关API =====
 
     /**
      * 功能：获取当前登录用户的个人信息
@@ -249,9 +240,8 @@ interface ApiService {
      *   "createdAt": "2024-01-01T00:00:00Z"
      * }
      */
-
-    @PUT("user/profile")
-    suspend fun updateUserProfile(@Body profile: UserProfile): Response<ApiResponse<String>>
+    @GET("user/profile")
+    suspend fun getUserProfile(): Response<UserProfile>
 
     /**
      * 功能：更新用户个人信息
@@ -266,13 +256,10 @@ interface ApiService {
      *   "data": null
      * }
      */
+    @PUT("user/profile")
+    suspend fun updateUserProfile(@Body profile: UserProfile): Response<ApiResponse<String>>
 
-    // 搜索相关API
-    @GET("search/history")
-    suspend fun getSearchHistory(
-        @Query("userId") userId: String,
-        @Query("limit") limit: Int = 10
-    ): Response<SearchHistoryResponse>
+    // ===== 搜索相关API =====
 
     /**
      * 功能：获取用户的搜索历史记录
@@ -294,9 +281,11 @@ interface ApiService {
      *   "total": 15
      * }
      */
-
-    @POST("search/history")
-    suspend fun addSearchHistory(@Body request: SearchHistoryRequest): Response<ApiResponse<String>>
+    @GET("search/history")
+    suspend fun getSearchHistory(
+        @Query("userId") userId: String,
+        @Query("limit") limit: Int = 10
+    ): Response<SearchHistoryResponse>
 
     /**
      * 功能：添加搜索历史记录
@@ -315,9 +304,8 @@ interface ApiService {
      *   "data": null
      * }
      */
-
-    @DELETE("search/history/{id}")
-    suspend fun deleteSearchHistory(@Path("id") historyId: String): Response<ApiResponse<String>>
+    @POST("search/history")
+    suspend fun addSearchHistory(@Body request: SearchHistoryRequest): Response<ApiResponse<String>>
 
     /**
      * 功能：删除单个搜索历史记录
@@ -331,9 +319,8 @@ interface ApiService {
      *   "data": null
      * }
      */
-
-    @DELETE("search/history")
-    suspend fun clearSearchHistory(@Query("userId") userId: String): Response<ApiResponse<String>>
+    @DELETE("search/history/{id}")
+    suspend fun deleteSearchHistory(@Path("id") historyId: String): Response<ApiResponse<String>>
 
     /**
      * 功能：清空用户的所有搜索历史
@@ -347,15 +334,10 @@ interface ApiService {
      *   "data": null
      * }
      */
+    @DELETE("search/history")
+    suspend fun clearSearchHistory(@Query("userId") userId: String): Response<ApiResponse<String>>
 
     // ===== 订单历史相关API =====
-
-    @GET("orders/published")
-    suspend fun getPublishedOrders(
-        @Query("page") page: Int = 1,
-        @Query("pageSize") pageSize: Int = 20,
-        @Query("status") status: String? = null
-    ): Response<OrderListResponse>
 
     /**
      * 功能：获取用户发布的订单列表
@@ -389,9 +371,8 @@ interface ApiService {
      *   "pageSize": 20
      * }
      */
-
-    @GET("orders/accepted")
-    suspend fun getAcceptedOrders(
+    @GET("orders/published")
+    suspend fun getPublishedOrders(
         @Query("page") page: Int = 1,
         @Query("pageSize") pageSize: Int = 20,
         @Query("status") status: String? = null
@@ -404,9 +385,12 @@ interface ApiService {
      * GET /api/orders/accepted?page=1&pageSize=20&status=IN_PROGRESS
      * 响应格式：同getPublishedOrders
      */
-
-    @GET("orders/{orderId}")
-    suspend fun getOrderDetail(@Path("orderId") orderId: String): Response<Order>
+    @GET("orders/accepted")
+    suspend fun getAcceptedOrders(
+        @Query("page") page: Int = 1,
+        @Query("pageSize") pageSize: Int = 20,
+        @Query("status") status: String? = null
+    ): Response<OrderListResponse>
 
     /**
      * 功能：获取订单详情
@@ -415,9 +399,8 @@ interface ApiService {
      * GET /api/orders/1
      * 响应：单个Order对象的完整信息
      */
-
-    @GET("orders/stats")
-    suspend fun getOrderStats(): Response<OrderStats>
+    @GET("orders/{orderId}")
+    suspend fun getOrderDetail(@Path("orderId") orderId: String): Response<Order>
 
     /**
      * 功能：获取用户订单统计信息
@@ -432,9 +415,8 @@ interface ApiService {
      *   "totalIncome": 120.0
      * }
      */
-
-    @POST("orders/{orderId}/accept")
-    suspend fun acceptOrder(@Path("orderId") orderId: String): Response<ApiResponse<Void>>
+    @GET("orders/stats")
+    suspend fun getOrderStats(): Response<OrderStats>
 
     /**
      * 功能：接单操作（订单历史相关）
@@ -448,9 +430,8 @@ interface ApiService {
      *   "data": null
      * }
      */
-
-    @POST("orders/{orderId}/complete")
-    suspend fun completeOrder(@Path("orderId") orderId: String): Response<ApiResponse<Void>>
+    @POST("orders/{orderId}/accept")
+    suspend fun acceptOrder(@Path("orderId") orderId: String): Response<ApiResponse<Void>>
 
     /**
      * 功能：完成订单操作
@@ -464,9 +445,8 @@ interface ApiService {
      *   "data": null
      * }
      */
-
-    @POST("orders/{orderId}/cancel")
-    suspend fun cancelOrder(@Path("orderId") orderId: String): Response<ApiResponse<Void>>
+    @POST("orders/{orderId}/complete")
+    suspend fun completeOrder(@Path("orderId") orderId: String): Response<ApiResponse<Void>>
 
     /**
      * 功能：取消订单操作
@@ -480,15 +460,54 @@ interface ApiService {
      *   "data": null
      * }
      */
+    @POST("orders/{orderId}/cancel")
+    suspend fun cancelOrder(@Path("orderId") orderId: String): Response<ApiResponse<Void>>
+
+    // ===== 登录相关API =====
+
+    /**
+     * 功能：用户登录
+     * 调用位置：UserRepository.login()
+     * 后端实现示例：
+     * POST /api/auth/login
+     * 请求体：
+     * {
+     *   "studentId": "U202012345",
+     *   "password": "password123"
+     * }
+     * 响应示例：
+     * {
+     *   "code": 200,
+     *   "message": "登录成功",
+     *   "data": {
+     *     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+     *     "user": {
+     *       "id": "1",
+     *       "studentId": "U202012345",
+     *       "name": "小明",
+     *       ...
+     *     }
+     *   }
+     * }
+     */
+    @POST("auth/login")
+    suspend fun login(@Body loginRequest: LoginRequest): Response<ApiResponse<LoginResponse>>
 }
 
 // 请求和响应数据类
+
+/**
+ * 通用API响应格式
+ */
 data class ApiResponse<T>(
     val code: Int,
     val message: String,
     val data: T? = null
 )
 
+/**
+ * 任务发布请求体
+ */
 data class TaskRequest(
     val title: String,
     val description: String,
@@ -501,7 +520,34 @@ data class TaskRequest(
     val specialRequirements: String? = null
 )
 
+/**
+ * 消息发送请求体
+ */
 data class MessageRequest(
     val content: String,
     val type: MessageType = MessageType.CHAT
+)
+
+/**
+ * 搜索历史添加请求体
+ */
+data class SearchHistoryRequest(
+    val keyword: String,
+    val userId: String
+)
+
+/**
+ * 用户登录请求体
+ */
+data class LoginRequest(
+    val studentId: String,
+    val password: String
+)
+
+/**
+ * 用户登录响应体
+ */
+data class LoginResponse(
+    val token: String,
+    val user: UserProfile
 )

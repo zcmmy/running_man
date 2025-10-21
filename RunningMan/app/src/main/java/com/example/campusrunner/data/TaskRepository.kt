@@ -101,6 +101,36 @@ object TaskRepository {
 
     /**
      * 获取任务详情 - 优先从服务器获取，失败则使用模拟数据
+     * 后端接入步骤：
+     * 1. 取消注释 getTaskDetailFromServer(taskId, onSuccess, onError) 调用
+     * 2. 在 getTaskDetailFromServer 中实现真实的后端API调用
+     * 3. 移除模拟数据逻辑
+     * 调用位置：TaskDetailScreen.kt, 任务详情页面
+     *
+     * 后端API实现示例：
+     * GET /api/tasks/{taskId}
+     * 请求示例：GET /api/tasks/1
+     * 响应示例：
+     * {
+     *   "id": "1",
+     *   "title": "麦当劳大套餐",
+     *   "description": "校门口取餐，送至图书馆三楼 A301。请确保食物保持温热状态，饮料不要摇晃。",
+     *   "price": 15.0,
+     *   "type": "FOOD_DELIVERY",
+     *   "status": "PENDING",
+     *   "location": "学校南门麦当劳",
+     *   "destination": "图书馆三楼 A301",
+     *   "distance": 2.0,
+     *   "publisherId": "user1",
+     *   "publisherName": "张同学",
+     *   "publisherAvatar": null,
+     *   "publisherRating": 4.8,
+     *   "createdAt": "2024-01-20T10:00:00Z",
+     *   "acceptedAt": null,
+     *   "completedAt": null,
+     *   "runnerId": null,
+     *   "runnerName": null
+     * }
      */
     fun getTaskById(
         taskId: String,
@@ -116,15 +146,34 @@ object TaskRepository {
             if (task != null) {
                 onSuccess(task)
             } else {
-                // 如果模拟数据中没有，尝试从服务器获取
+                // TODO: 当后端API准备好后，取消注释以下代码
+                // 优先从服务器获取任务详情
                 // getTaskDetailFromServer(taskId, onSuccess, onError)
+
+                // 临时模拟：如果模拟数据中没有，返回错误
                 onError("任务不存在或已被删除")
             }
         }.start()
     }
 
     /**
-     * 从服务器获取任务详情
+     * 从服务器获取任务详情 - 私有函数，被getTaskById调用
+     * 后端接入步骤：
+     * 1. 取消注释 apiService.getTaskDetail(taskId).execute() 调用
+     * 2. 处理网络响应，包括成功和错误情况
+     * 3. 移除模拟数据逻辑
+     *
+     * 实现示例：
+     * try {
+     *     val response = apiService.getTaskDetail(taskId).execute()
+     *     if (response.isSuccessful && response.body() != null) {
+     *         onSuccess(response.body()!!)
+     *     } else {
+     *         onError("获取任务详情失败: ${response.code()}")
+     *     }
+     * } catch (e: Exception) {
+     *     onError("网络错误: ${e.message}")
+     * }
      */
     private fun getTaskDetailFromServer(
         taskId: String,
@@ -134,14 +183,16 @@ object TaskRepository {
         Thread {
             try {
                 // TODO: 当后端API准备好后，取消注释以下代码
-                // val response = apiService.getTaskDetail(taskId).execute()
-                // if (response.isSuccessful && response.body() != null) {
-                //     onSuccess(response.body()!!)
-                // } else {
-                //     onError("获取任务详情失败: ${response.code()}")
-                // }
+                /*
+                val response = apiService.getTaskDetail(taskId).execute()
+                if (response.isSuccessful && response.body() != null) {
+                    onSuccess(response.body()!!)
+                } else {
+                    onError("获取任务详情失败: ${response.code()}")
+                }
+                */
 
-                // 临时使用模拟数据
+                // 临时使用模拟数据 - 后端API完成后删除
                 val task = mockTasks.find { it.id == taskId }
                 if (task != null) {
                     onSuccess(task)
@@ -155,7 +206,12 @@ object TaskRepository {
     }
 
     /**
-     * 接单接口 - 模拟网络请求
+     * 功能：接单操作
+     * 后端接入步骤：
+     * 1. 取消注释apiService.acceptTask()调用
+     * 2. 处理网络响应
+     * 3. 移除模拟成功逻辑
+     * 调用位置：TaskDetailScreen, 用户点击接单按钮时
      */
     fun acceptTask(
         taskId: String,
@@ -167,18 +223,20 @@ object TaskRepository {
             Thread.sleep(800)
 
             // TODO: 当后端API准备好后，替换为真实网络请求
-            // try {
-            //     val response = apiService.acceptTask(taskId).execute()
-            //     if (response.isSuccessful && response.body()?.code == 200) {
-            //         onSuccess()
-            //     } else {
-            //         onError("接单失败: ${response.body()?.message ?: "未知错误"}")
-            //     }
-            // } catch (e: Exception) {
-            //     onError("网络错误: ${e.message}")
-            // }
+            /*
+            try {
+                val response = apiService.acceptTask(taskId).execute()
+                if (response.isSuccessful && response.body()?.code == 200) {
+                    onSuccess()
+                } else {
+                    onError("接单失败: ${response.body()?.message ?: "未知错误"}")
+                }
+            } catch (e: Exception) {
+                onError("网络错误: ${e.message}")
+            }
+            */
 
-            // 模拟随机成功/失败
+            // 模拟随机成功/失败 - 后端API完成后删除
             if (Math.random() > 0.2) {
                 onSuccess()
             } else {
@@ -187,8 +245,14 @@ object TaskRepository {
         }.start()
     }
 
+
     /**
-     * 发布任务到服务器
+     * 功能：发布新任务到服务器
+     * 后端接入步骤：
+     * 1. 取消注释apiService.createTask()调用
+     * 2. 处理网络响应
+     * 3. 移除模拟成功逻辑
+     * 调用位置：PostScreen, 用户发布任务时
      */
     fun createTask(
         taskRequest: TaskRequest,
@@ -199,18 +263,20 @@ object TaskRepository {
             Thread.sleep(1000)
 
             // TODO: 当后端API准备好后，取消注释以下代码
-            // try {
-            //     val response = apiService.createTask(taskRequest).execute()
-            //     if (response.isSuccessful && response.body()?.code == 200) {
-            //         onSuccess(response.body()?.data ?: "发布成功")
-            //     } else {
-            //         onError("发布失败: ${response.body()?.message ?: "未知错误"}")
-            //     }
-            // } catch (e: Exception) {
-            //     onError("网络错误: ${e.message}")
-            // }
+            /*
+            try {
+                val response = apiService.createTask(taskRequest).execute()
+                if (response.isSuccessful && response.body()?.code == 200) {
+                    onSuccess(response.body()?.data ?: "发布成功")
+                } else {
+                    onError("发布失败: ${response.body()?.message ?: "未知错误"}")
+                }
+            } catch (e: Exception) {
+                onError("网络错误: ${e.message}")
+            }
+            */
 
-            // 临时模拟成功
+            // 临时模拟成功 - 后端API完成后删除
             onSuccess("任务发布成功！")
         }.start()
     }

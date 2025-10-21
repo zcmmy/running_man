@@ -34,7 +34,12 @@ class OrderRepository {
     val error: StateFlow<String?> = _error.asStateFlow()
 
     /**
-     * 获取发布的订单列表
+     * 功能：获取用户发布的订单列表
+     * 后端接入步骤：
+     * 1. 取消注释apiService.getPublishedOrders()调用
+     * 2. 处理分页和状态筛选
+     * 3. 移除模拟数据逻辑
+     * 调用位置：OrderHistoryScreen, OrderHistoryViewModel
      */
     suspend fun fetchPublishedOrders(status: OrderHistoryStatus? = null) {
         _isLoading.value = true
@@ -65,7 +70,12 @@ class OrderRepository {
     }
 
     /**
-     * 获取接单的订单列表
+     * 功能：获取用户接单的订单列表
+     * 后端接入步骤：
+     * 1. 取消注释apiService.getAcceptedOrders()调用
+     * 2. 处理分页和状态筛选
+     * 3. 移除模拟数据逻辑
+     * 调用位置：OrderHistoryScreen, OrderHistoryViewModel
      */
     suspend fun fetchAcceptedOrders(status: OrderHistoryStatus? = null) {
         _isLoading.value = true
@@ -96,7 +106,12 @@ class OrderRepository {
     }
 
     /**
-     * 获取订单统计信息
+     * 功能：获取订单统计信息
+     * 后端接入步骤：
+     * 1. 取消注释apiService.getOrderStats()调用
+     * 2. 处理网络响应
+     * 3. 移除模拟数据逻辑
+     * 调用位置：ProfileScreen, 用户个人页面
      */
     suspend fun fetchOrderStats() {
         try {
@@ -121,7 +136,12 @@ class OrderRepository {
     }
 
     /**
-     * 接单操作
+     * 功能：接单操作
+     * 后端接入步骤：
+     * 1. 取消注释apiService.acceptOrder()调用
+     * 2. 处理网络响应
+     * 3. 移除模拟成功逻辑
+     * 调用位置：任务列表，用户点击接单时
      */
     suspend fun acceptOrder(orderId: String): Boolean {
         try {
@@ -141,16 +161,61 @@ class OrderRepository {
 
     /**
      * 完成订单操作
+     * 后端接入步骤：
+     * 1. 取消注释 apiService.completeOrder(orderId) 调用
+     * 2. 处理网络响应，包括成功和错误情况
+     * 3. 移除模拟成功逻辑
+     * 调用位置：订单详情页面，跑腿员点击完成订单时
+     *
+     * 后端API实现示例：
+     * POST /api/orders/{orderId}/complete
+     * 请求示例：POST /api/orders/1/complete
+     * 请求头：需要Authorization token
+     * 请求体：无
+     * 响应示例：
+     * {
+     *   "code": 200,
+     *   "message": "订单已完成",
+     *   "data": null
+     * }
+     *
+     * 错误响应示例：
+     * {
+     *   "code": 400,
+     *   "message": "订单状态不允许完成操作",
+     *   "data": null
+     * }
      */
     suspend fun completeOrder(orderId: String): Boolean {
         try {
             // TODO: 当后端API可用时，取消注释以下代码
             /*
             val response = apiService.completeOrder(orderId)
-            return response.isSuccessful && response.body()?.code == 200
+            if (response.isSuccessful && response.body()?.code == 200) {
+                // 订单完成成功后，可以更新本地订单状态
+                _acceptedOrders.value = _acceptedOrders.value.map { order ->
+                    if (order.id == orderId) {
+                        order.copy(status = OrderHistoryStatus.COMPLETED)
+                    } else {
+                        order
+                    }
+                }
+                return true
+            } else {
+                _error.value = "完成订单失败: ${response.body()?.message ?: "未知错误"}"
+                return false
+            }
             */
 
             // 模拟成功 - 后端API完成后删除
+            // 更新本地订单状态为已完成
+            _acceptedOrders.value = _acceptedOrders.value.map { order ->
+                if (order.id == orderId) {
+                    order.copy(status = OrderHistoryStatus.COMPLETED)
+                } else {
+                    order
+                }
+            }
             return true
         } catch (e: Exception) {
             _error.value = "完成订单失败: ${e.message}"
@@ -160,16 +225,66 @@ class OrderRepository {
 
     /**
      * 取消订单操作
+     * 后端接入步骤：
+     * 1. 取消注释 apiService.cancelOrder(orderId) 调用
+     * 2. 处理网络响应，包括成功和错误情况
+     * 3. 移除模拟成功逻辑
+     * 调用位置：订单详情页面，用户点击取消订单时
+     *
+     * 后端API实现示例：
+     * POST /api/orders/{orderId}/cancel
+     * 请求示例：POST /api/orders/1/cancel
+     * 请求头：需要Authorization token
+     * 请求体：无
+     * 响应示例：
+     * {
+     *   "code": 200,
+     *   "message": "订单已取消",
+     *   "data": null
+     * }
+     *
+     * 错误响应示例：
+     * {
+     *   "code": 400,
+     *   "message": "订单已开始配送，无法取消",
+     *   "data": null
+     * }
+     *
+     * 注意事项：
+     * - 只有订单发布者可以取消订单
+     * - 订单状态必须是待接单或已接单状态才能取消
+     * - 已经开始配送的订单可能需要联系客服取消
      */
     suspend fun cancelOrder(orderId: String): Boolean {
         try {
             // TODO: 当后端API可用时，取消注释以下代码
             /*
             val response = apiService.cancelOrder(orderId)
-            return response.isSuccessful && response.body()?.code == 200
+            if (response.isSuccessful && response.body()?.code == 200) {
+                // 订单取消成功后，更新本地订单状态
+                _publishedOrders.value = _publishedOrders.value.map { order ->
+                    if (order.id == orderId) {
+                        order.copy(status = OrderHistoryStatus.CANCELLED)
+                    } else {
+                        order
+                    }
+                }
+                return true
+            } else {
+                _error.value = "取消订单失败: ${response.body()?.message ?: "未知错误"}"
+                return false
+            }
             */
 
             // 模拟成功 - 后端API完成后删除
+            // 更新本地订单状态为已取消
+            _publishedOrders.value = _publishedOrders.value.map { order ->
+                if (order.id == orderId) {
+                    order.copy(status = OrderHistoryStatus.CANCELLED)
+                } else {
+                    order
+                }
+            }
             return true
         } catch (e: Exception) {
             _error.value = "取消订单失败: ${e.message}"

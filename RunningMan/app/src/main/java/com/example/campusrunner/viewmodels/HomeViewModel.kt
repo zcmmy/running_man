@@ -84,19 +84,6 @@ class HomeViewModel : ViewModel() {
                 // 模拟搜索延迟
                 kotlinx.coroutines.delay(500)
 
-                // 添加搜索历史（模拟）
-                SearchRepository.addSearchHistory(
-                    userId = currentUserId,
-                    keyword = keyword,
-                    onSuccess = {
-                        // 重新加载搜索历史
-                        loadSearchHistory()
-                    },
-                    onError = { error ->
-                        _errorState.value = "添加搜索历史失败: $error"
-                    }
-                )
-
                 // 执行搜索（模拟）
                 SearchRepository.searchTasks(
                     keyword = keyword,

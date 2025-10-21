@@ -54,6 +54,14 @@ object SearchRepository {
     /**
      * 获取搜索历史
      */
+    /**
+     * 功能：获取搜索历史记录
+     * 后端接入步骤：
+     * 1. 取消注释apiService.getSearchHistory()调用
+     * 2. 处理网络响应
+     * 3. 移除模拟数据逻辑
+     * 调用位置：HomeViewModel.loadSearchHistory(), SearchScreen
+     */
     fun getSearchHistory(
         userId: String,
         limit: Int = 10,
@@ -64,18 +72,20 @@ object SearchRepository {
             Thread.sleep(300)
 
             // TODO: 当后端API准备好后，取消注释以下代码
-            // try {
-            //     val response = apiService.getSearchHistory(userId, limit).execute()
-            //     if (response.isSuccessful && response.body() != null) {
-            //         onSuccess(response.body()!!.histories)
-            //     } else {
-            //         onError("获取搜索历史失败: ${response.code()}")
-            //     }
-            // } catch (e: Exception) {
-            //     onError("网络错误: ${e.message}")
-            // }
+            /*
+            try {
+                val response = apiService.getSearchHistory(userId, limit).execute()
+                if (response.isSuccessful && response.body() != null) {
+                    onSuccess(response.body()!!.histories)
+                } else {
+                    onError("获取搜索历史失败: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("网络错误: ${e.message}")
+            }
+            */
 
-            // 临时使用模拟数据
+            // 临时使用模拟数据 - 后端API完成后删除
             val histories = mockSearchHistory
                 .filter { it.userId == userId }
                 .sortedByDescending { it.lastSearchedAt }
@@ -85,36 +95,35 @@ object SearchRepository {
     }
 
     /**
-     * 添加搜索历史
-     */
-    fun addSearchHistory(
-        userId: String,
-        keyword: String,
-        onSuccess: () -> Unit,
-        onError: (String) -> Unit
-    ) {
-        Thread {
-            Thread.sleep(200)
-
-            // TODO: 当后端API准备好后，取消注释以下代码
-            // try {
-            //     val response = apiService.addSearchHistory(SearchHistoryRequest(keyword, userId)).execute()
-            //     if (response.isSuccessful && response.body()?.code == 200) {
-            //         onSuccess()
-            //     } else {
-            //         onError("添加搜索历史失败: ${response.body()?.message ?: "未知错误"}")
-            //     }
-            // } catch (e: Exception) {
-            //     onError("网络错误: ${e.message}")
-            // }
-
-            // 临时模拟成功
-            onSuccess()
-        }.start()
-    }
-
-    /**
      * 删除单个搜索历史
+     * 后端接入步骤：
+     * 1. 取消注释 apiService.deleteSearchHistory(historyId).execute() 调用
+     * 2. 处理网络响应，包括成功和错误情况
+     * 3. 移除模拟成功逻辑
+     * 调用位置：SearchScreen.kt, 用户点击删除单个搜索历史项时
+     *
+     * 后端API实现示例：
+     * DELETE /api/search/history/{historyId}
+     * 请求示例：DELETE /api/search/history/1
+     * 请求头：需要Authorization token
+     * 响应示例：
+     * {
+     *   "code": 200,
+     *   "message": "删除成功",
+     *   "data": null
+     * }
+     *
+     * 错误响应示例：
+     * {
+     *   "code": 404,
+     *   "message": "搜索历史记录不存在",
+     *   "data": null
+     * }
+     *
+     * 注意事项：
+     * - 只能删除当前用户自己的搜索历史
+     * - 删除后需要刷新搜索历史列表
+     * - 删除操作不可逆，需要确认提示
      */
     fun deleteSearchHistory(
         historyId: String,
@@ -125,24 +134,56 @@ object SearchRepository {
             Thread.sleep(200)
 
             // TODO: 当后端API准备好后，取消注释以下代码
-            // try {
-            //     val response = apiService.deleteSearchHistory(historyId).execute()
-            //     if (response.isSuccessful && response.body()?.code == 200) {
-            //         onSuccess()
-            //     } else {
-            //         onError("删除搜索历史失败: ${response.body()?.message ?: "未知错误"}")
-            //     }
-            // } catch (e: Exception) {
-            //     onError("网络错误: ${e.message}")
-            // }
+            /*
+            try {
+                val response = apiService.deleteSearchHistory(historyId).execute()
+                if (response.isSuccessful && response.body()?.code == 200) {
+                    // 删除成功后，可以调用回调函数并刷新本地数据
+                    onSuccess()
+                } else {
+                    onError("删除搜索历史失败: ${response.body()?.message ?: "未知错误"}")
+                }
+            } catch (e: Exception) {
+                onError("网络错误: ${e.message}")
+            }
+            */
 
-            // 临时模拟成功
+            // 临时模拟成功 - 后端API完成后删除
             onSuccess()
         }.start()
     }
 
     /**
      * 清空搜索历史
+     * 后端接入步骤：
+     * 1. 取消注释 apiService.clearSearchHistory(userId).execute() 调用
+     * 2. 处理网络响应，包括成功和错误情况
+     * 3. 移除模拟成功逻辑
+     * 调用位置：SearchScreen.kt, 用户点击"清空"按钮时
+     *
+     * 后端API实现示例：
+     * DELETE /api/search/history?userId={userId}
+     * 请求示例：DELETE /api/search/history?userId=current_user
+     * 请求头：需要Authorization token
+     * 响应示例：
+     * {
+     *   "code": 200,
+     *   "message": "搜索历史已清空",
+     *   "data": null
+     * }
+     *
+     * 错误响应示例：
+     * {
+     *   "code": 400,
+     *   "message": "用户ID不能为空",
+     *   "data": null
+     * }
+     *
+     * 注意事项：
+     * - 清空操作会删除用户的所有搜索历史记录
+     * - 操作不可逆，需要确认提示对话框
+     * - 清空后需要立即更新UI显示空状态
+     * - 建议在清空成功后调用getSearchHistory刷新数据
      */
     fun clearSearchHistory(
         userId: String,
@@ -153,24 +194,32 @@ object SearchRepository {
             Thread.sleep(200)
 
             // TODO: 当后端API准备好后，取消注释以下代码
-            // try {
-            //     val response = apiService.clearSearchHistory(userId).execute()
-            //     if (response.isSuccessful && response.body()?.code == 200) {
-            //         onSuccess()
-            //     } else {
-            //         onError("清空搜索历史失败: ${response.body()?.message ?: "未知错误"}")
-            //     }
-            // } catch (e: Exception) {
-            //     onError("网络错误: ${e.message}")
-            // }
+            /*
+            try {
+                val response = apiService.clearSearchHistory(userId).execute()
+                if (response.isSuccessful && response.body()?.code == 200) {
+                    // 清空成功后，可以调用回调函数
+                    onSuccess()
+                } else {
+                    onError("清空搜索历史失败: ${response.body()?.message ?: "未知错误"}")
+                }
+            } catch (e: Exception) {
+                onError("网络错误: ${e.message}")
+            }
+            */
 
-            // 临时模拟成功
+            // 临时模拟成功 - 后端API完成后删除
             onSuccess()
         }.start()
     }
 
     /**
-     * 搜索任务
+     * 功能：搜索任务
+     * 后端接入步骤：
+     * 1. 取消注释apiService.getTasks()调用（带search参数）
+     * 2. 处理网络响应
+     * 3. 移除模拟数据逻辑
+     * 调用位置：HomeViewModel.performSearch(), 用户执行搜索时
      */
     fun searchTasks(
         keyword: String,
@@ -181,18 +230,20 @@ object SearchRepository {
             Thread.sleep(500)
 
             // TODO: 当后端API准备好后，取消注释以下代码
-            // try {
-            //     val response = apiService.getTasks(search = keyword).execute()
-            //     if (response.isSuccessful) {
-            //         onSuccess(response.body() ?: emptyList())
-            //     } else {
-            //         onError("搜索失败: ${response.code()}")
-            //     }
-            // } catch (e: Exception) {
-            //     onError("网络错误: ${e.message}")
-            // }
+            /*
+            try {
+                val response = apiService.getTasks(search = keyword).execute()
+                if (response.isSuccessful) {
+                    onSuccess(response.body() ?: emptyList())
+                } else {
+                    onError("搜索失败: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("网络错误: ${e.message}")
+            }
+            */
 
-            // 临时使用TaskRepository的模拟数据并过滤
+            // 临时使用模拟数据 - 后端API完成后删除
             val allTasks = getAllMockTasksForSearch()
             val filteredTasks = allTasks.filter { task ->
                 task.title.contains(keyword, ignoreCase = true) ||
@@ -204,6 +255,7 @@ object SearchRepository {
             onSuccess(filteredTasks)
         }.start()
     }
+
 
     /**
      * 获取用于搜索的模拟任务数据

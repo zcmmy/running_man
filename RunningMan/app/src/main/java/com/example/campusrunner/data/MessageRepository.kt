@@ -144,7 +144,12 @@ object MessageRepository {
     private val apiService: ApiService = RetrofitClient.apiService
 
     /**
-     * 获取聊天会话列表
+     * 功能：获取聊天会话列表
+     * 后端接入步骤：
+     * 1. 取消注释apiService.getChatSessions()调用
+     * 2. 处理网络响应
+     * 3. 移除模拟数据逻辑
+     * 调用位置：MessagesScreen, 消息页面
      */
     fun getChatSessions(
         onSuccess: (List<ChatSession>) -> Unit,
@@ -154,24 +159,31 @@ object MessageRepository {
             Thread.sleep(300)
 
             // TODO: 当后端API准备好后，取消注释以下代码
-            // try {
-            //     val response = apiService.getChatSessions().execute()
-            //     if (response.isSuccessful) {
-            //         onSuccess(response.body() ?: emptyList())
-            //     } else {
-            //         onError("获取聊天会话失败: ${response.code()}")
-            //     }
-            // } catch (e: Exception) {
-            //     onError("网络错误: ${e.message}")
-            // }
+            /*
+            try {
+                val response = apiService.getChatSessions().execute()
+                if (response.isSuccessful) {
+                    onSuccess(response.body() ?: emptyList())
+                } else {
+                    onError("获取聊天会话失败: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("网络错误: ${e.message}")
+            }
+            */
 
-            // 临时使用模拟数据
+            // 临时使用模拟数据 - 后端API完成后删除
             onSuccess(mockChatSessions)
         }.start()
     }
 
     /**
-     * 获取聊天消息列表
+     * 功能：获取聊天消息历史
+     * 后端接入步骤：
+     * 1. 取消注释apiService.getChatMessages()调用
+     * 2. 处理网络响应
+     * 3. 移除模拟数据逻辑
+     * 调用位置：ChatScreen, 聊天页面
      */
     fun getChatMessages(
         orderId: String,
@@ -182,18 +194,20 @@ object MessageRepository {
             Thread.sleep(300)
 
             // TODO: 当后端API准备好后，取消注释以下代码
-            // try {
-            //     val response = apiService.getChatMessages(orderId).execute()
-            //     if (response.isSuccessful) {
-            //         onSuccess(response.body() ?: emptyList())
-            //     } else {
-            //         onError("获取聊天消息失败: ${response.code()}")
-            //     }
-            // } catch (e: Exception) {
-            //     onError("网络错误: ${e.message}")
-            // }
+            /*
+            try {
+                val response = apiService.getChatMessages(orderId).execute()
+                if (response.isSuccessful) {
+                    onSuccess(response.body() ?: emptyList())
+                } else {
+                    onError("获取聊天消息失败: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("网络错误: ${e.message}")
+            }
+            */
 
-            // 临时使用模拟数据
+            // 临时使用模拟数据 - 后端API完成后删除
             val messages = mockChatMessages[orderId] ?: emptyList()
             onSuccess(messages)
         }.start()
@@ -201,6 +215,39 @@ object MessageRepository {
 
     /**
      * 获取系统消息列表
+     * 后端接入步骤：
+     * 1. 取消注释 apiService.getSystemMessages().execute() 调用
+     * 2. 处理网络响应，包括成功和错误情况
+     * 3. 移除模拟数据逻辑
+     * 调用位置：MessagesScreen.kt, 系统消息页面
+     *
+     * 后端API实现示例：
+     * GET /api/messages/system
+     * 请求示例：GET /api/messages/system
+     * 响应示例：
+     * [
+     *   {
+     *     "id": "sys1",
+     *     "type": "ORDER_UPDATE",
+     *     "title": "订单已完成",
+     *     "content": "您的订单 #20240001 已完成，感谢使用RunningMan服务",
+     *     "senderId": "system",
+     *     "senderName": "系统通知",
+     *     "orderId": "2",
+     *     "isRead": true,
+     *     "createdAt": "2024-01-20T10:00:00Z"
+     *   },
+     *   {
+     *     "id": "sys2",
+     *     "type": "SYSTEM",
+     *     "title": "新功能上线",
+     *     "content": "RunningMan新增实时位置追踪功能，快来体验吧！",
+     *     "senderId": "system",
+     *     "senderName": "系统通知",
+     *     "isRead": false,
+     *     "createdAt": "2024-01-20T09:30:00Z"
+     *   }
+     * ]
      */
     fun getSystemMessages(
         onSuccess: (List<Message>) -> Unit,
@@ -210,24 +257,31 @@ object MessageRepository {
             Thread.sleep(300)
 
             // TODO: 当后端API准备好后，取消注释以下代码
-            // try {
-            //     val response = apiService.getSystemMessages().execute()
-            //     if (response.isSuccessful) {
-            //         onSuccess(response.body() ?: emptyList())
-            //     } else {
-            //         onError("获取系统消息失败: ${response.code()}")
-            //     }
-            // } catch (e: Exception) {
-            //     onError("网络错误: ${e.message}")
-            // }
+            /*
+            try {
+                val response = apiService.getSystemMessages().execute()
+                if (response.isSuccessful) {
+                    onSuccess(response.body() ?: emptyList())
+                } else {
+                    onError("获取系统消息失败: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("网络错误: ${e.message}")
+            }
+            */
 
-            // 临时使用模拟数据
+            // 临时使用模拟数据 - 后端API完成后删除
             onSuccess(mockSystemMessages)
         }.start()
     }
 
     /**
-     * 发送消息
+     * 功能：发送聊天消息
+     * 后端接入步骤：
+     * 1. 取消注释apiService.sendMessage()调用
+     * 2. 处理网络响应
+     * 3. 移除模拟成功逻辑
+     * 调用位置：ChatScreen, 用户发送消息时
      */
     fun sendMessage(
         orderId: String,
@@ -239,18 +293,20 @@ object MessageRepository {
             Thread.sleep(500)
 
             // TODO: 当后端API准备好后，取消注释以下代码
-            // try {
-            //     val response = apiService.sendMessage(orderId, MessageRequest(content)).execute()
-            //     if (response.isSuccessful && response.body()?.code == 200) {
-            //         onSuccess()
-            //     } else {
-            //         onError("发送消息失败: ${response.body()?.message ?: "未知错误"}")
-            //     }
-            // } catch (e: Exception) {
-            //     onError("网络错误: ${e.message}")
-            // }
+            /*
+            try {
+                val response = apiService.sendMessage(orderId, MessageRequest(content)).execute()
+                if (response.isSuccessful && response.body()?.code == 200) {
+                    onSuccess()
+                } else {
+                    onError("发送消息失败: ${response.body()?.message ?: "未知错误"}")
+                }
+            } catch (e: Exception) {
+                onError("网络错误: ${e.message}")
+            }
+            */
 
-            // 临时模拟成功
+            // 临时模拟成功 - 后端API完成后删除
             onSuccess()
         }.start()
     }

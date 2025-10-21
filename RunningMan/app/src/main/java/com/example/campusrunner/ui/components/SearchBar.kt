@@ -1,11 +1,13 @@
+/*
 package com.example.campusrunner.ui.components
 
+*/
 /**
  * @Deprecated 这个组件已被新的搜索页面实现替代
  * 请使用 SearchScreen 页面代替
- */
+ *//*
 
-/*
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -282,10 +284,7 @@ fun SearchHistoryItem(
     }
 }
 
-*/
-/**
- * 可展开的搜索栏组件
- *//*
+
 
 @Composable
 fun ExpandableSearchBar(

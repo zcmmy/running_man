@@ -9,7 +9,8 @@ object Destinations {
     const val Chat = "chat"
     const val OrderTracking = "orderTracking"
     const val Search = "search"
-    const val Login = "login" // 添加登录页面路由
+    const val Login = "login"
+    const val OrderHistory = "orderHistory" // 添加订单历史页面路由
 
     // 带参数的路径
     object DetailWithArgs {

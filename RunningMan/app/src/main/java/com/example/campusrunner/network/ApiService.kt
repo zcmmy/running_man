@@ -71,6 +71,68 @@ interface ApiService {
 
     @DELETE("search/history")
     suspend fun clearSearchHistory(@Query("userId") userId: String): Response<ApiResponse<String>>
+
+    // ===== 订单历史相关API - 新增 =====
+
+    /**
+     * 获取用户发布的订单列表
+     * @param page 页码
+     * @param pageSize 每页大小
+     * @param status 订单状态筛选（可选）
+     */
+    @GET("orders/published")
+    suspend fun getPublishedOrders(
+        @Query("page") page: Int = 1,
+        @Query("pageSize") pageSize: Int = 20,
+        @Query("status") status: String? = null
+    ): Response<OrderListResponse>
+
+    /**
+     * 获取用户接单的订单列表
+     * @param page 页码
+     * @param pageSize 每页大小
+     * @param status 订单状态筛选（可选）
+     */
+    @GET("orders/accepted")
+    suspend fun getAcceptedOrders(
+        @Query("page") page: Int = 1,
+        @Query("pageSize") pageSize: Int = 20,
+        @Query("status") status: String? = null
+    ): Response<OrderListResponse>
+
+    /**
+     * 获取订单详情
+     * @param orderId 订单ID
+     */
+    @GET("orders/{orderId}")
+    suspend fun getOrderDetail(@Path("orderId") orderId: String): Response<Order>
+
+    /**
+     * 获取订单统计信息
+     */
+    @GET("orders/stats")
+    suspend fun getOrderStats(): Response<OrderStats>
+
+    /**
+     * 接单
+     * @param orderId 订单ID
+     */
+    @POST("orders/{orderId}/accept")
+    suspend fun acceptOrder(@Path("orderId") orderId: String): Response<ApiResponse<Void>>
+
+    /**
+     * 完成订单
+     * @param orderId 订单ID
+     */
+    @POST("orders/{orderId}/complete")
+    suspend fun completeOrder(@Path("orderId") orderId: String): Response<ApiResponse<Void>>
+
+    /**
+     * 取消订单
+     * @param orderId 订单ID
+     */
+    @POST("orders/{orderId}/cancel")
+    suspend fun cancelOrder(@Path("orderId") orderId: String): Response<ApiResponse<Void>>
 }
 
 // 请求和响应数据类

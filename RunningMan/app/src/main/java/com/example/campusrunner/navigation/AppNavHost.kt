@@ -13,9 +13,11 @@ import com.example.campusrunner.ui.screens.ChatScreen
 import com.example.campusrunner.ui.screens.HomeScreen
 import com.example.campusrunner.ui.screens.LoginScreen
 import com.example.campusrunner.ui.screens.MessagesScreen
+import com.example.campusrunner.ui.screens.OrderHistoryScreen
 import com.example.campusrunner.ui.screens.PostScreen
 import com.example.campusrunner.ui.screens.ProfileScreen
 import com.example.campusrunner.ui.screens.TaskDetailScreen
+import com.example.campusrunner.ui.screens.SearchScreen
 
 @Composable
 fun AppNavHost() {
@@ -54,6 +56,13 @@ fun AppNavHost() {
                 if (isLoggedIn) {
                     ProfileScreen(navController = navController)
                 }
+            }
+            composable("orderHistory") {
+                OrderHistoryScreen(navController = navController)
+            }
+            // 添加搜索页面路由
+            composable(Destinations.Search) {
+                SearchScreen(navController = navController)
             }
             composable("detail/{taskId}") { backStackEntry ->
                 val taskId = backStackEntry.arguments?.getString("taskId") ?: ""

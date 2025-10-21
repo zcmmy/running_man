@@ -54,7 +54,7 @@ fun ProfileScreen(navController: NavController? = null) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.CenterStart // 将整个 Box 的内容对齐方式设置为左对齐
             ) {
                 Text(
                     text = "个人中心",
@@ -159,7 +159,7 @@ fun ProfileScreen(navController: NavController? = null) {
                         title = "订单历史",
                         description = "查看我的所有订单记录"
                     ) {
-                        // TODO: 导航到订单历史页面
+                        navController?.navigate("orderHistory")
                     }
 
                     ProfileMenuItem(

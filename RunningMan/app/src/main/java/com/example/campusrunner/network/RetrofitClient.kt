@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
     // TODO: 替换为实际的后端服务器地址
-    private const val BASE_URL = "https://your-api-server.com/api/"
+    private const val BASE_URL = "http://10.12.55.91:2202/api/"
 
     /**
      * 功能：配置HTTP日志拦截器，方便调试网络请求
@@ -59,28 +59,23 @@ object RetrofitClient {
 
     val apiService: ApiService = retrofit.create(ApiService::class.java)
 
+    // 添加 token 管理（需要 Context）
+    private var authToken: String? = null
+
     // TODO: 实现具体的token获取逻辑
-    private fun getAuthToken(): String? {
-        /**
-         * 功能：从本地存储获取认证token
-         * 实现示例：
-         * val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-         * return sharedPref.getString("auth_token", null)
-         */
-        // 从SharedPreferences或其他存储中获取token
-        // 示例：return SharedPreferencesManager.getAuthToken()
-        return null
+    fun setAuthToken(token: String) {
+        authToken = token
+        // 可选：保存到 SharedPreferences
+        // val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        // sharedPref.edit().putString("auth_token", token).apply()
     }
 
-    // TODO: 在用户登录成功后调用此方法保存token
-    fun setAuthToken(token: String) {
-        /**
-         * 功能：保存认证token到本地存储
-         * 实现示例：
-         * val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-         * sharedPref.edit().putString("auth_token", token).apply()
-         */
-        // 保存token到SharedPreferences或其他存储
-        // 示例：SharedPreferencesManager.saveAuthToken(token)
+    fun getAuthToken(): String? {
+        // 先从内存获取，如果没有则从 SharedPreferences 读取
+        return authToken ?: run {
+            // val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+            // sharedPref.getString("auth_token", null)
+            null
+        }
     }
 }

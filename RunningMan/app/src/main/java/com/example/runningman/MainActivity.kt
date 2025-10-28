@@ -11,6 +11,8 @@ import com.example.campusrunner.data.UserRepository
 import com.example.campusrunner.navigation.AppNavHost
 import com.example.campusrunner.theme.CampusRunnerTheme
 import com.example.campusrunner.utils.PermissionUtils
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
 
 class MainActivity : ComponentActivity() {
 
@@ -43,7 +45,9 @@ class MainActivity : ComponentActivity() {
         checkAndRequestPermissions()
 
         // 初始化用户状态检查
-        UserRepository.checkLoginStatus()
+        lifecycleScope.launch {
+            UserRepository.checkLoginStatus()
+        }
 
         setContent {
             CampusRunnerTheme {

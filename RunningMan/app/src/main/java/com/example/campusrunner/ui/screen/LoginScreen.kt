@@ -61,7 +61,7 @@ fun LoginScreen(navController: NavController) {
     LaunchedEffect(shouldLogin) {
         if (shouldLogin) {
             isLoading = true
-            delay(1000) // 模拟网络请求
+            //delay(1000) // 模拟网络请求
             val success = UserRepository.login(studentId, password)
             if (success) {
                 // 登录成功，导航到首页
@@ -69,7 +69,7 @@ fun LoginScreen(navController: NavController) {
                     popUpTo(0) // 弹出到导航栈底，即关闭所有页面
                 }
             } else {
-                errorMessage = "学号或密码错误"
+                errorMessage = "账号或密码错误"
             }
             isLoading = false
             shouldLogin = false
@@ -128,7 +128,7 @@ fun LoginScreen(navController: NavController) {
                             studentId = it
                             errorMessage = null
                         },
-                        label = { Text("学号") },
+                        label = { Text("账号") },
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Person,
@@ -179,7 +179,7 @@ fun LoginScreen(navController: NavController) {
                     Button(
                         onClick = {
                             if (studentId.isBlank() || password.isBlank()) {
-                                errorMessage = "请填写学号和密码"
+                                errorMessage = "请填写账号和密码"
                                 return@Button
                             }
 
@@ -211,7 +211,7 @@ fun LoginScreen(navController: NavController) {
 
                     // 提示文本
                     Text(
-                        text = "首次使用请使用学号登录",
+                        text = "校园跑，你的校园好帮手",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )

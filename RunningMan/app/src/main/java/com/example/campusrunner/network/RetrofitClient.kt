@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
     // TODO: 替换为实际的后端服务器地址
-    private const val BASE_URL = "http://10.12.55.91:2202/api/"
+    private const val BASE_URL = "http://10.21.200.74:2202/"
 
     /**
      * 功能：配置HTTP日志拦截器，方便调试网络请求

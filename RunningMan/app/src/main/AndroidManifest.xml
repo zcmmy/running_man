@@ -32,7 +32,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RunningMan"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="31">
+
+        <!-- 田间android:networkSecurityConfig -->
 
         <!-- 高德地图配置 - 需要时取消注释并替换YOUR_AMAP_API_KEY -->
         <!--

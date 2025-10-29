@@ -236,7 +236,7 @@ interface ApiService {
      * "email": "xiaoming@example.com",
      * "creditScore": 4.8,
      * "totalOrders": 8,
-     * "totalIncome": 85.0, // <-- 后端也需要将此字段改为 "balance"
+     * "balance": 85.0, // <-- (提醒) 后端也需要将此字段改为 "balance"
      * "createdAt": "2024-01-01T00:00:00Z"
      * }
      */
@@ -259,7 +259,6 @@ interface ApiService {
     @PUT("user/profile")
     suspend fun updateUserProfile(@Body profile: UserProfile): Response<ApiResponse<String>>
 
-    // --- (MODIFIED) ADDED: 新增 "增加余额" API ---
     /**
      * 功能：为用户增加余额 (跑腿员完成订单时调用)
      * 调用位置：UserRepository.addBalance()
@@ -279,6 +278,27 @@ interface ApiService {
      */
     @POST("user/addBalance")
     suspend fun addBalance(@Body request: AddBalanceRequest): Response<ApiResponse<String>>
+
+    // --- (MODIFIED) ADDED: 新增 "扣除余额" API ---
+    /**
+     * 功能：扣除当前用户的余额 (发布者发布任务时调用)
+     * 调用位置：UserRepository.subtractBalance()
+     * 后端实现示例：
+     * POST /api/user/subtractBalance
+     * 请求体：
+     * {
+     * "amount": 15.0
+     * }
+     * (后端通过token获取用户ID)
+     * 响应示例：
+     * {
+     * "code": 200,
+     * "message": "扣款成功",
+     * "data": "新的余额: 70.0"
+     * }
+     */
+    @POST("user/subtractBalance")
+    suspend fun subtractBalance(@Body request: SubtractBalanceRequest): Response<ApiResponse<String>>
     // --- END: 新增 API ---
 
 
@@ -575,7 +595,7 @@ data class LoginResponse(
     val user: UserProfile
 )
 
-// --- (MODIFIED) ADDED: 新增 "增加余额" 请求体 ---
+// --- 新增: "增加余额" 请求体 ---
 /**
  * 功能：增加余额请求体
  * 调用位置：UserRepository.addBalance() -> apiService.addBalance()
@@ -586,5 +606,16 @@ data class AddBalanceRequest(
     val userId: String,
     val amount: Double
 )
-// --- END: 新增请求体 ---
+// --- 新增请求体 结束 ---
+
+// --- 新增: "扣除余额" 请求体 ---
+/**
+ * 功能：扣除余额请求体
+ * 调用位置：UserRepository.subtractBalance() -> apiService.subtractBalance()
+ * @param amount 需要扣除的金额 (后端通过token来识别用户)
+ */
+data class SubtractBalanceRequest(
+    val amount: Double
+)
+// --- 新增请求体 结束 ---
 

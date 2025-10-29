@@ -77,7 +77,7 @@ fun SearchResultsScreen(
                             // [ 参数 ] 4. 增大图标尺寸
                             modifier = Modifier.size(28.dp),
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "返回" // 简体中文
+                            contentDescription = "返回"
                         )
                     }
                     // 标题
@@ -129,20 +129,20 @@ fun SearchResultsScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
                                 imageVector = Icons.Filled.Info,
-                                contentDescription = "错误", // 简体中文
+                                contentDescription = "错误",
                                 tint = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.size(64.dp)
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "加载失败", // 简体中文
+                                text = "加载失败",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.error
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = currentError, // <-- [修复] 使用局部变量
+                                text = currentError,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -160,20 +160,20 @@ fun SearchResultsScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
                                 imageVector = Icons.Filled.Info,
-                                contentDescription = "无结果", // 简体中文
+                                contentDescription = "无结果",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(64.dp)
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "没有找到相关任务", // 简体中文
+                                text = "没有找到相关任务",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "尝试更换一个搜索词吧", // 简体中文
+                                text = "尝试更换一个搜索词吧",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

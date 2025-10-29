@@ -47,7 +47,7 @@ class WebMapActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val url = intent.getStringExtra(EXTRA_URL) ?: "about:blank"
-        val title = intent.getStringExtra(EXTRA_TITLE) ?: "地图" // 简体中文
+        val title = intent.getStringExtra(EXTRA_TITLE) ?: "地图"
 
         setContent {
             MaterialTheme {
@@ -80,7 +80,7 @@ fun WebMapScreen(title: String, url: String, onClose: () -> Unit) {
                 },
                 navigationIcon = {
                     IconButton(onClick = onClose) {
-                        Icon(Icons.Default.Close, contentDescription = "关闭") // 简体中文
+                        Icon(Icons.Default.Close, contentDescription = "关闭")
                     }
                 }
             )

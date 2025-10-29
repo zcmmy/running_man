@@ -4,12 +4,14 @@ import com.example.campusrunner.model.UserProfile
 import com.example.campusrunner.network.RetrofitClient
 import com.example.campusrunner.network.ApiService
 import com.example.campusrunner.network.LoginRequest
-import com.example.campusrunner.network.LoginResponse
+import com.example.campusrunner.network.AddBalanceRequest
+import com.example.campusrunner.network.SubtractBalanceRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.Date
 import android.util.Log
+import kotlin.Result // 确保导入 Result
 
 /**
  * 用户状态管理仓库
@@ -45,7 +47,9 @@ object UserRepository {
 
                 if (loginResponse.code == 200) {
                     // 保存 token
-                    RetrofitClient.setAuthToken(loginResponse.data?.token ?: "")
+                    val token = loginResponse.data?.token ?: ""
+                    authToken = token // 保存在内存中
+                    RetrofitClient.setAuthToken(token)
 
                     // 更新用户状态
                     _currentUser.value = loginResponse.data?.user
@@ -98,6 +102,8 @@ object UserRepository {
         if (authToken != null && authToken!!.isNotEmpty()) {
             // 如果有 token，尝试获取用户信息来验证有效性
             try {
+                // (MODIFIED) 确保 token 已设置到 RetrofitClient
+                RetrofitClient.setAuthToken(authToken!!)
                 val response = apiService.getUserProfile()
                 if (response.isSuccessful && response.body() != null) {
                     _currentUser.value = response.body()
@@ -115,7 +121,7 @@ object UserRepository {
         _currentUser.value = null
     }
 
-    // --- ADDED: 新增函数 ---
+    // --- (MODIFIED): 调整现有函数 ---
 
     /**
      * 功能：获取当前登录用户的ID
@@ -127,12 +133,9 @@ object UserRepository {
     }
 
     /**
-     * 功能：为指定用户增加余额 (跑腿员完成订单)
-     * 后端接入步骤：
-     * 1. (已添加) 在 ApiService 中定义一个 addBalance 接口 (例如 @POST("/user/addBalance"))
-     * 2. (已添加) 调用 apiService.addBalance(...)
-     * 3. (已添加) 成功后，调用 fetchUserProfile() 刷新本地的用户信息
-     * 调用位置：MessagesViewModel
+     * 功能：为指定用户增加余额 (跑腿员完成订单 或 发布任务失败时退款)
+     * (MODIFIED: 实现了真实的API调用)
+     * 调用位置：MessagesViewModel, PostScreen
      */
     suspend fun addBalance(userId: String, amount: Double) {
         // 确保增加的金额是正数
@@ -142,25 +145,24 @@ object UserRepository {
         }
 
         try {
-            // TODO: (后端) 1. 在 ApiService 中定义 addBalance(AddBalanceRequest(userId, amount))
-            // val response = apiService.addBalance(AddBalanceRequest(userId, amount))
+            // 1. (MODIFIED) 调用真实的API
+            val response = apiService.addBalance(AddBalanceRequest(userId, amount))
 
-            // (模拟后端调用成功)
-            Log.d("UserRepository", "正在为 $userId 增加余额 $amount (模拟)")
-            // 模拟延迟
-            kotlinx.coroutines.delay(500)
-
-            // 2. 假设后端调用成功
-            // if (response.isSuccessful) {
-            Log.d("UserRepository", "余额增加成功，正在刷新本地用户信息...")
-            // 3. 刷新当前用户的个人信息，以便UI（如ProfileScreen）更新
-            // 仅当被修改的用户是当前登录用户时才刷新
-            if (userId == _currentUser.value?.id) {
-                fetchUserProfile()
+            // 2. (MODIFIED) 检查响应
+            if (response.isSuccessful && response.body()?.code == 200) {
+                Log.d("UserRepository", "余额增加成功，正在刷新本地用户信息...")
+                // 3. 刷新当前用户的个人信息
+                // 仅当被修改的用户是当前登录用户时才刷新
+                if (userId == _currentUser.value?.id) {
+                    // (MODIFIED) 优化：不在重新fetch，而是直接在本地更新余额
+                    val currentBalance = _currentUser.value?.balance ?: 0.0
+                    val newBalance = currentBalance + amount
+                    _currentUser.value = _currentUser.value?.copy(balance = newBalance)
+                    Log.d("UserRepository", "本地余额已更新为: $newBalance")
+                }
+            } else {
+                Log.e("UserRepository", "addBalance 失败: ${response.message()} | ${response.body()?.message}")
             }
-            // } else {
-            //     Log.e("UserRepository", "addBalance 失败: ${response.message()}")
-            // }
 
         } catch (e: Exception) {
             Log.e("UserRepository", "addBalance 异常: ${e.message}")
@@ -168,8 +170,51 @@ object UserRepository {
         }
     }
 
-    // (你可能需要一个 DTO 来请求)
-    // data class AddBalanceRequest(val userId: String, val amount: Double)
+
+    // --- (MODIFIED) ADDED: 新增 "扣除余额" 函数 ---
+
+    /**
+     * 功能：扣除当前用户的余额 (发布任务时)
+     * 调用位置：PostViewModel (或 PostScreen)
+     * @return Result<Unit> - 成功或失败
+     */
+    suspend fun subtractBalance(amount: Double): Result<Unit> {
+        if (amount <= 0) {
+            Log.w("UserRepository", "subtractBalance: 尝试扣除无效金额 $amount")
+            return Result.failure(Exception("扣除金额必须为正数"))
+        }
+
+        // 获
+        val currentBalance = _currentUser.value?.balance ?: 0.0
+        if (currentBalance < amount) {
+            Log.w("UserRepository", "subtractBalance: 余额不足 (当前: $currentBalance, 需要: $amount)")
+            return Result.failure(Exception("余额不足"))
+        }
+
+        try {
+            // 1. 调用API
+            val response = apiService.subtractBalance(SubtractBalanceRequest(amount))
+
+            // 2. 检查响应
+            if (response.isSuccessful && response.body()?.code == 200) {
+                Log.d("UserRepository", "扣款成功，正在更新本地余额...")
+                // 3. 在本地立即更新余额
+                val newBalance = currentBalance - amount
+                _currentUser.value = _currentUser.value?.copy(balance = newBalance)
+                Log.d("UserRepository", "本地余额已更新为: $newBalance")
+                return Result.success(Unit)
+            } else {
+                val errorMsg = response.body()?.message ?: "扣款失败: ${response.message()}"
+                Log.e("UserRepository", "subtractBalance 失败: $errorMsg")
+                return Result.failure(Exception(errorMsg))
+            }
+
+        } catch (e: Exception) {
+            Log.e("UserRepository", "subtractBalance 异常: ${e.message}")
+            e.printStackTrace()
+            return Result.failure(e)
+        }
+    }
 
     // --- END: 新增函数 ---
 }

@@ -136,7 +136,7 @@ fun ProfileScreen(navController: NavController? = null) {
                             label = "总订单"
                         )
                         StatItem(
-                            value = "¥${currentUser?.banlance?.toInt() ?: 0}",
+                            value = "¥${currentUser?.balance?.toInt() ?: 0}",
                             label = "余额"
                         )
                         StatItem(

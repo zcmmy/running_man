@@ -43,6 +43,7 @@ import com.example.campusrunner.ui.viewmodels.OrderHistoryViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderHistoryScreen(navController: NavController) {
+    // (MODIFIED) 确保 viewModel() 能够找到正确的 ViewModel
     val viewModel: OrderHistoryViewModel = viewModel()
     val publishedOrders by viewModel.publishedOrders.collectAsState()
     val acceptedOrders by viewModel.acceptedOrders.collectAsState()

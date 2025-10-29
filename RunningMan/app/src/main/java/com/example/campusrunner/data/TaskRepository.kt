@@ -35,7 +35,6 @@ object TaskRepository {
         }
     }
 
-    // 移除了私有的 getTaskDetailFromServer，逻辑合并到 getTaskById
 
     /**
      * 功能：接单操作

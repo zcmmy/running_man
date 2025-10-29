@@ -1,6 +1,7 @@
 package com.example.campusrunner.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable // [!!] 导入
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,11 +41,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext // [!!] 导入
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.campusrunner.utils.MapUtils // [!!] 导入
 import com.example.campusrunner.viewmodels.AcceptTaskState
 import com.example.campusrunner.viewmodels.TaskDetailViewModel
 import kotlinx.coroutines.launch
@@ -278,6 +281,9 @@ fun TaskBasicInfoCard(task: com.example.campusrunner.model.Task) {
 
 @Composable
 fun TaskDetailsCard(task: com.example.campusrunner.model.Task) {
+    // [!!] 获取 Context
+    val context = LocalContext.current
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -297,7 +303,11 @@ fun TaskDetailsCard(task: com.example.campusrunner.model.Task) {
             DetailRow(
                 icon = Icons.Filled.LocationOn,
                 title = "取货地点",
-                content = task.location
+                content = task.location,
+                // [!!] 添加点击事件和 modifier
+                modifier = Modifier.clickable {
+                    MapUtils.showAddressOnWebMap(context, task.location)
+                }
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -306,7 +316,11 @@ fun TaskDetailsCard(task: com.example.campusrunner.model.Task) {
             DetailRow(
                 icon = Icons.Filled.LocationOn,
                 title = "送货地点",
-                content = task.destination
+                content = task.destination,
+                // [!!] 添加点击事件和 modifier
+                modifier = Modifier.clickable {
+                    MapUtils.showAddressOnWebMap(context, task.destination)
+                }
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -316,11 +330,15 @@ fun TaskDetailsCard(task: com.example.campusrunner.model.Task) {
                 icon = Icons.Filled.Schedule,
                 title = "发布时间",
                 content = task.getCreatedTimeText()
+                // (不需要 modifier，它会使用默认值 Modifier)
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             // 距离信息
+            // [!!] 注意：这个 getFormattedDistance() 可能不再准确，
+            // 因为我们删除了原生地图服务。如果它显示为0或奇怪的值，
+            // 你可以考虑隐藏这一行，或者将其 content 改为 "N/A"。
             DetailRow(
                 icon = Icons.Filled.LocationOn,
                 title = "距离",
@@ -526,14 +544,16 @@ fun ActionButtons(
     }
 }
 
+// [!!] 修正 DetailRow 函数定义
 @Composable
 fun DetailRow(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     title: String,
-    content: String
+    content: String,
+    modifier: Modifier = Modifier // [!!] 添加 modifier 参数并设置默认值
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(), // [!!] 应用 modifier
         verticalAlignment = Alignment.Top
     ) {
         Icon(
@@ -561,3 +581,4 @@ fun DetailRow(
         }
     }
 }
+

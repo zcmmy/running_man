@@ -94,10 +94,6 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
-    // 高德地图 (TODO: 根据实际需要选择版本)
-    // implementation 'com.amap.api:3dmap:latest.integration'
-    // implementation 'com.amap.api:location:latest.integration'
-    // implementation 'com.amap.api:search:latest.integration'
 
 
     // Compose动画

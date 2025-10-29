@@ -206,7 +206,6 @@ fun MessagesScreen(navController: NavController? = null) {
     }
 }
 
-// ... 其余代码保持不变（ChatSessionsList、ChatSessionItem、SystemMessagesList、SystemMessageItem、EmptyState）
 @Composable
 fun ChatSessionsList(
     sessions: List<com.example.campusrunner.model.ChatSession>,

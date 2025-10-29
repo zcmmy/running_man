@@ -2,25 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- 网络权限 - 必须 -->
+    <!-- 网络权限 - 必须保留 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <!-- 高德地图所需权限 - 可选，需要时启用 -->
-    <!-- 定位权限 -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-    <!-- 存储权限（高德地图缓存需要） -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <!-- WiFi状态权限（高德地图定位优化） -->
+    <!-- WiFi状态权限 - 保留，有助于判断网络情况 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
-    <!-- 网络状态权限 -->
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <!-- [!!] 已删除的权限 [!!]
+     - ACCESS_COARSE_LOCATION (不再需要)
+     - ACCESS_FINE_LOCATION (不再需要)
+     - READ_EXTERNAL_STORAGE (已过时，目标 SDK 36)
+     - WRITE_EXTERNAL_STORAGE (已过时，目标 SDK 36)
+     - CHANGE_WIFI_STATE (不再需要)
+     - CHANGE_NETWORK_STATE (不再需要)
+    -->
 
     <application
         android:name=".CampusRunnerApplication"
@@ -35,20 +30,6 @@
         android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="31">
 
-        <!-- 田间android:networkSecurityConfig -->
-
-        <!-- 高德地图配置 - 需要时取消注释并替换YOUR_AMAP_API_KEY -->
-        <!--
-        <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="YOUR_AMAP_API_KEY" />
-        -->
-
-        <!-- 高德地图服务配置 -->
-        <!--
-        <service android:name="com.amap.api.location.APSService" />
-        -->
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -59,5 +40,69 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- [!!] 必须添加：注册 WebMapActivity [!!] -->
+        <activity
+            android:name=".ui.screens.WebMapActivity"
+            android:exported="false"
+            android:label="地图详情"
+            android:theme="@style/Theme.RunningMan" />
+
     </application>
+
+    <!-- [!!] 必须添加：应用包可见性查询 [!!]
+         修复 "未找到应用" 错误。
+         这必须放在 <application> 标签之外。
+    -->
+    <queries>
+        <!-- 允许查询浏览器 (https) -->
+        <intent>
+            <action android:name="android.content.Intent.ACTION_VIEW" />
+            <data android:scheme="https" />
+        </intent>
+
+        <!-- 允许查询地图协议 (Scheme) -->
+        <intent>
+            <action android:name="android.content.Intent.ACTION_VIEW" />
+            <data android:scheme="amap" /> <!-- 高德地图 -->
+        </intent>
+        <intent>
+            <action android:name="android.content.Intent.ACTION_VIEW" />
+            <data android:scheme="baidumap" /> <!-- 百度地图 -->
+        </intent>
+        <intent>
+            <action android:name="android.content.Intent.ACTION_VIEW" />
+            <data android:scheme="qqmap" /> <!-- 腾讯地图 -->
+        </intent>
+
+        <!-- 允许查询地包名 (Package Name)，这是更稳健的方式 -->
+        <package android:name="com.autonavi.minimap" /> <!-- 高德地图 -->
+        <package android:name="com.baidu.BaiduMap" /> <!-- 百度地图 -->
+        <package android:name="com.tencent.map" /> <!-- 腾讯地图 -->
+
+
+        <intent>
+            <action android:name="android.content.Intent.ACTION_VIEW" />
+            <data android:scheme="httpsS" />
+        </intent>
+
+        <intent>
+            <action android:name="android.content.Intent.ACTION_VIEW" />
+            <data android:scheme="geo" />
+        </intent>
+
+        <intent>
+            <action android:name="android.content.Intent.ACTION_VIEW" />
+            <data android:scheme="amap" /> </intent>
+        <intent>
+            <action android:name="android.content.Intent.ACTION_VIEW" />
+            <data android:scheme="baidumap" /> </intent>
+        <intent>
+            <action android:name="android.content.Intent.ACTION_VIEW" />
+            <data android:scheme="qqmap" /> </intent>
+
+        <package android:name="com.autonavi.minimap" /> <package android:name="com.baidu.BaiduMap" /> <package android:name="com.tencent.map" />
+
+    </queries>
+
 </manifest>

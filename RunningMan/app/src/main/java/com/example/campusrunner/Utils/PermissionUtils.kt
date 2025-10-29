@@ -25,11 +25,6 @@ object PermissionUtils {
         }
     }
 
-    // 检查位置权限
-    fun hasLocationPermissions(context: Context): Boolean {
-        return hasPermissions(context, LOCATION_PERMISSIONS)
-    }
-
     // 检查存储权限
     fun hasStoragePermissions(context: Context): Boolean {
         return hasPermissions(context, STORAGE_PERMISSIONS)

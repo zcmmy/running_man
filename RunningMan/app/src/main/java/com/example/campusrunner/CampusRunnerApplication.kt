@@ -1,13 +1,10 @@
 package com.example.campusrunner
 
 import android.app.Application
-import com.example.campusrunner.map.AMapServiceImpl
-import com.example.campusrunner.map.MapService
+
 
 class CampusRunnerApplication : Application() {
 
-    // 全局地图服务实例
-    var mapService: MapService? = null
 
     override fun onCreate() {
         super.onCreate()

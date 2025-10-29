@@ -44,9 +44,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.campusrunner.ui.components.LiveOrderCard
+import com.example.campusrunner.ui.components.LiveOrderCard // 确保 LiveOrderCard 在这个包名下
 import com.example.campusrunner.viewmodels.MessagesViewModel
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,6 +61,9 @@ fun MessagesScreen(navController: NavController? = null) {
     val isLoading = viewModel.loadingState.value
     val error = viewModel.errorState.value
     val selectedTab = viewModel.selectedTab.value
+
+    // *** 修复点 1：从 ViewModel 获取 currentUserId ***
+    val currentUserId = viewModel.currentUserId.value
 
     // Snackbar状态管理
     val snackbarHostState = remember { SnackbarHostState() }
@@ -129,7 +135,8 @@ fun MessagesScreen(navController: NavController? = null) {
                 .padding(padding)
         ) {
             when {
-                isLoading -> {
+                // 修改加载逻辑：仅在首次加载时显示全屏加载
+                isLoading && (liveOrder == null && chatSessions.isEmpty() && systemMessages.isEmpty()) -> {
                     // 加载中状态
                     Column(
                         modifier = Modifier.fillMaxSize(),
@@ -141,7 +148,7 @@ fun MessagesScreen(navController: NavController? = null) {
                         Text("加载消息中...")
                     }
                 }
-                error != null -> {
+                error != null && !isLoading -> {
                     // 错误状态
                     Column(
                         modifier = Modifier.fillMaxSize(),
@@ -169,11 +176,18 @@ fun MessagesScreen(navController: NavController? = null) {
                         liveOrder?.let { order ->
                             if (order.status != com.example.campusrunner.model.OrderStatus.COMPLETED &&
                                 order.status != com.example.campusrunner.model.OrderStatus.CANCELLED) {
+
+                                // *** 修复点 2：更新 LiveOrderCard 调用 ***
                                 LiveOrderCard(
                                     liveOrder = order,
                                     navController = navController,
                                     onSendMessage = { message ->
                                         viewModel.sendMessageToRunner(message)
+                                    },
+                                    // *** 传入新参数 ***
+                                    currentUserId = currentUserId,
+                                    onCompleteOrder = {
+                                        viewModel.completeLiveOrder()
                                     }
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -205,6 +219,46 @@ fun MessagesScreen(navController: NavController? = null) {
         }
     }
 }
+
+// (为了完整性，我从你上传的文件中复制了以下 Composable，并添加了 getTimeText 和 getTypeIcon 的简单实现)
+
+// -----------------------------------------------------------------
+// 以下是 MessagesScreen.kt 中的其余 Composable
+// (为解决编译问题，我添加了 getTimeText 和 getTypeIcon 的辅助函数)
+// -----------------------------------------------------------------
+
+/**
+ * 辅助函数：格式化日期
+ */
+private fun Date.getTimeText(): String {
+    val now = Date()
+    val diff = now.time - this.time
+    val minutes = diff / (60 * 1000)
+    val hours = minutes / 60
+    val days = hours / 24
+
+    return when {
+        minutes < 1 -> "刚刚"
+        minutes < 60 -> "${minutes}分钟前"
+        hours < 24 -> "${hours}小时前"
+        days < 2 -> "昨天"
+        else -> SimpleDateFormat("MM-dd", Locale.getDefault()).format(this)
+    }
+}
+
+/**
+ * 辅助函数：获取消息图标
+ */
+private fun com.example.campusrunner.model.Message.getTypeIcon(): String {
+    return when (this.type) {
+        com.example.campusrunner.model.MessageType.ORDER_UPDATE -> "📦"
+        com.example.campusrunner.model.MessageType.PROMOTION -> "🎉"
+        com.example.campusrunner.model.MessageType.SYSTEM -> "⚙️"
+        com.example.campusrunner.model.MessageType.CHAT -> "💬"
+        else -> "💡"
+    }
+}
+
 
 @Composable
 fun ChatSessionsList(
@@ -276,7 +330,7 @@ fun ChatSessionItem(
                         fontWeight = FontWeight.Medium
                     )
                     Text(
-                        text = session.getTimeText(),
+                        text = session.lastMessageTime.getTimeText(), // 使用辅助函数
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -363,7 +417,7 @@ fun SystemMessageItem(
         ) {
             // 消息类型图标
             Text(
-                text = message.getTypeIcon(),
+                text = message.getTypeIcon(), // 使用辅助函数
                 modifier = Modifier.padding(end = 12.dp),
                 fontSize = MaterialTheme.typography.headlineMedium.fontSize
             )
@@ -387,7 +441,7 @@ fun SystemMessageItem(
                         }
                     )
                     Text(
-                        text = message.getTimeText(),
+                        text = message.createdAt.getTimeText(), // 使用辅助函数
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -440,3 +494,4 @@ fun EmptyState(
         )
     }
 }
+

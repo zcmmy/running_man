@@ -37,7 +37,7 @@ object UserRepository {
      * 调用位置：LoginScreen, 用户登录时
      */
 
-    /*suspend fun login(studentId: String, password: String): Boolean {
+    suspend fun login(studentId: String, password: String): Boolean {
         try {
             val response = apiService.login(LoginRequest(studentId, password))
             if (response.isSuccessful && response.body() != null) {
@@ -58,73 +58,8 @@ object UserRepository {
             e.printStackTrace()
             return false
         }
-    }*/
-
-    suspend fun login(studentId: String, password: String): Boolean {
-        Log.d("UserRepository", "开始登录流程")
-        Log.d("UserRepository", "学号: $studentId, 密码长度: ${password.length}")
-
-        try {
-            Log.d("UserRepository", "创建登录请求")
-            val loginRequest = LoginRequest(studentId, password)
-
-            Log.d("UserRepository", "调用登录API")
-            val response = apiService.login(loginRequest)
-            Log.d("UserRepository", "API调用完成，响应状态: ${response.isSuccessful}")
-
-            if (response.isSuccessful) {
-                Log.d("UserRepository", "响应成功，解析响应体")
-                val apiResponse = response.body()
-
-                if (apiResponse != null) {
-                    Log.d("UserRepository", "响应体解析成功，code: ${apiResponse.code}, message: ${apiResponse.message}")
-
-                    if (apiResponse.code == 200) {
-                        val loginResponse = apiResponse.data
-                        Log.d("UserRepository", "登录成功，data: $loginResponse")
-
-                        if (loginResponse != null) {
-                            val token = loginResponse.token ?: ""
-                            Log.d("UserRepository", "获取到token，长度: ${token.length}")
-
-                            // 保存 token
-                            RetrofitClient.setAuthToken(token)
-                            this.authToken = token
-
-                            // 更新用户状态
-                            _currentUser.value = loginResponse.user
-                            _isLoggedIn.value = true
-
-                            Log.d("UserRepository", "用户信息更新完成: ${loginResponse.user}")
-                            return true
-                        } else {
-                            Log.e("UserRepository", "登录响应中data为null")
-                        }
-                    } else {
-                        Log.e("UserRepository", "登录失败，错误码: ${apiResponse.code}, 错误信息: ${apiResponse.message}")
-                    }
-                } else {
-                    Log.e("UserRepository", "响应体为null")
-                }
-            } else {
-                Log.e("UserRepository", "响应失败，错误码: ${response.code()}, 错误信息: ${response.message()}")
-
-                // 尝试获取错误体
-                try {
-                    val errorBody = response.errorBody()?.string()
-                    Log.e("UserRepository", "错误响应体: $errorBody")
-                } catch (e: Exception) {
-                    Log.e("UserRepository", "无法读取错误响应体: ${e.message}")
-                }
-            }
-
-            return false
-        } catch (e: Exception) {
-            Log.e("UserRepository", "登录过程中发生异常: ${e.message}", e)
-            e.printStackTrace()
-            return false
-        }
     }
+
 
     /**
      * 获取用户个人信息
@@ -179,4 +114,63 @@ object UserRepository {
         _isLoggedIn.value = false
         _currentUser.value = null
     }
+
+    // --- ADDED: 新增函数 ---
+
+    /**
+     * 功能：获取当前登录用户的ID
+     * 备注：这是一个非 suspend 方法，它返回当前的状态值。
+     * ViewModel 加载时 _currentUser 应该已经被 checkLoginStatus() 填充了。
+     */
+    fun getCurrentUserId(): String? {
+        return _currentUser.value?.id
+    }
+
+    /**
+     * 功能：为指定用户增加余额 (跑腿员完成订单)
+     * 后端接入步骤：
+     * 1. (已添加) 在 ApiService 中定义一个 addBalance 接口 (例如 @POST("/user/addBalance"))
+     * 2. (已添加) 调用 apiService.addBalance(...)
+     * 3. (已添加) 成功后，调用 fetchUserProfile() 刷新本地的用户信息
+     * 调用位置：MessagesViewModel
+     */
+    suspend fun addBalance(userId: String, amount: Double) {
+        // 确保增加的金额是正数
+        if (amount <= 0) {
+            Log.w("UserRepository", "addBalance: 尝试增加无效金额 $amount")
+            return
+        }
+
+        try {
+            // TODO: (后端) 1. 在 ApiService 中定义 addBalance(AddBalanceRequest(userId, amount))
+            // val response = apiService.addBalance(AddBalanceRequest(userId, amount))
+
+            // (模拟后端调用成功)
+            Log.d("UserRepository", "正在为 $userId 增加余额 $amount (模拟)")
+            // 模拟延迟
+            kotlinx.coroutines.delay(500)
+
+            // 2. 假设后端调用成功
+            // if (response.isSuccessful) {
+            Log.d("UserRepository", "余额增加成功，正在刷新本地用户信息...")
+            // 3. 刷新当前用户的个人信息，以便UI（如ProfileScreen）更新
+            // 仅当被修改的用户是当前登录用户时才刷新
+            if (userId == _currentUser.value?.id) {
+                fetchUserProfile()
+            }
+            // } else {
+            //     Log.e("UserRepository", "addBalance 失败: ${response.message()}")
+            // }
+
+        } catch (e: Exception) {
+            Log.e("UserRepository", "addBalance 异常: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+
+    // (你可能需要一个 DTO 来请求)
+    // data class AddBalanceRequest(val userId: String, val amount: Double)
+
+    // --- END: 新增函数 ---
 }
+

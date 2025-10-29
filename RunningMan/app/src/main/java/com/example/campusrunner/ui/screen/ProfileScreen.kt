@@ -136,8 +136,8 @@ fun ProfileScreen(navController: NavController? = null) {
                             label = "总订单"
                         )
                         StatItem(
-                            value = "¥${currentUser?.totalIncome?.toInt() ?: 0}",
-                            label = "总收入"
+                            value = "¥${currentUser?.banlance?.toInt() ?: 0}",
+                            label = "余额"
                         )
                         StatItem(
                             value = currentUser?.creditScore?.toString() ?: "0.0",

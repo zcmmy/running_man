@@ -1,428 +1,162 @@
 package com.example.campusrunner.data
 
+import android.util.Log // <-- 1. 添加 Log 导入
 import com.example.campusrunner.model.SearchHistory
-import com.example.campusrunner.model.SearchHistoryRequest
-import com.example.campusrunner.model.SearchHistoryResponse
+import com.example.campusrunner.network.SearchHistoryRequest
 import com.example.campusrunner.model.Task
 import com.example.campusrunner.network.ApiService
 import com.example.campusrunner.network.RetrofitClient
-import java.util.*
+import kotlin.Result
 
 /**
- * 搜索数据仓库
+ * 搜索数据仓库 - 接入后端API
  */
 object SearchRepository {
 
     private val apiService: ApiService = RetrofitClient.apiService
+    private const val TAG = "SearchRepository" // <-- 2. 添加 TAG
 
-    // 模拟搜索历史数据（开发阶段使用）
-    private val mockSearchHistory = listOf(
-        SearchHistory(
-            id = "1",
-            userId = "current_user",
-            keyword = "麦当劳",
-            searchCount = 5,
-            lastSearchedAt = Date(System.currentTimeMillis() - 10 * 60 * 1000), // 10分钟前
-            createdAt = Date(System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000) // 7天前
-        ),
-        SearchHistory(
-            id = "2",
-            userId = "current_user",
-            keyword = "打印",
-            searchCount = 3,
-            lastSearchedAt = Date(System.currentTimeMillis() - 30 * 60 * 1000), // 30分钟前
-            createdAt = Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000) // 3天前
-        ),
-        SearchHistory(
-            id = "3",
-            userId = "current_user",
-            keyword = "快递",
-            searchCount = 8,
-            lastSearchedAt = Date(System.currentTimeMillis() - 2 * 60 * 60 * 1000), // 2小时前
-            createdAt = Date(System.currentTimeMillis() - 14 * 24 * 60 * 60 * 1000) // 14天前
-        ),
-        SearchHistory(
-            id = "4",
-            userId = "current_user",
-            keyword = "奶茶",
-            searchCount = 2,
-            lastSearchedAt = Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000), // 1天前
-            createdAt = Date(System.currentTimeMillis() - 2 * 24 * 60 * 60 * 1000) // 2天前
-        )
-    )
+    // 移除了 mockSearchHistory 模拟数据
 
-    /**
-     * 获取搜索历史
-     */
     /**
      * 功能：获取搜索历史记录
-     * 后端接入步骤：
-     * 1. 取消注释apiService.getSearchHistory()调用
-     * 2. 处理网络响应
-     * 3. 移除模拟数据逻辑
+     *
      * 调用位置：HomeViewModel.loadSearchHistory(), SearchScreen
+     * API: GET /api/search/history
      */
-    fun getSearchHistory(
+    suspend fun getSearchHistory(
         userId: String,
-        limit: Int = 10,
-        onSuccess: (List<SearchHistory>) -> Unit,
-        onError: (String) -> Unit
-    ) {
-        Thread {
-            Thread.sleep(300)
-
-            // TODO: 当后端API准备好后，取消注释以下代码
-            /*
-            try {
-                val response = apiService.getSearchHistory(userId, limit).execute()
-                if (response.isSuccessful && response.body() != null) {
-                    onSuccess(response.body()!!.histories)
-                } else {
-                    onError("获取搜索历史失败: ${response.code()}")
-                }
-            } catch (e: Exception) {
-                onError("网络错误: ${e.message}")
+        limit: Int = 10
+    ): Result<List<SearchHistory>> {
+        Log.d(TAG, "getSearchHistory: 正在请求... UserId: $userId, Limit: $limit") // <-- 添加日志
+        return try {
+            val response = apiService.getSearchHistory(userId, limit)
+            if (response.isSuccessful && response.body() != null) {
+                val histories = response.body()!!.histories
+                Log.d(TAG, "getSearchHistory: 成功。获取到 ${histories.size} 条历史。") // <-- 添加日志
+                Result.success(histories)
+            } else {
+                Log.w(TAG, "getSearchHistory: 失败。代码: ${response.code()}, 信息: ${response.message()}") // <-- 添加日志
+                Result.failure(Exception("获取搜索历史失败: ${response.code()} - ${response.message()}"))
             }
-            */
-
-            // 临时使用模拟数据 - 后端API完成后删除
-            val histories = mockSearchHistory
-                .filter { it.userId == userId }
-                .sortedByDescending { it.lastSearchedAt }
-                .take(limit)
-            onSuccess(histories)
-        }.start()
+        } catch (e: Exception) {
+            Log.e(TAG, "getSearchHistory: 网络异常", e) // <-- 添加日志
+            Result.failure(Exception("网络错误 (getSearchHistory): ${e.message}"))
+        }
     }
 
     /**
-     * 删除单个搜索历史
-     * 后端接入步骤：
-     * 1. 取消注释 apiService.deleteSearchHistory(historyId).execute() 调用
-     * 2. 处理网络响应，包括成功和错误情况
-     * 3. 移除模拟成功逻辑
-     * 调用位置：SearchScreen.kt, 用户点击删除单个搜索历史项时
+     * 功能：添加搜索历史（执行搜索时调用）
+     * (这是 HomeViewModel 需要的函数)
      *
-     * 后端API实现示例：
-     * DELETE /api/search/history/{historyId}
-     * 请求示例：DELETE /api/search/history/1
-     * 请求头：需要Authorization token
-     * 响应示例：
-     * {
-     *   "code": 200,
-     *   "message": "删除成功",
-     *   "data": null
-     * }
-     *
-     * 错误响应示例：
-     * {
-     *   "code": 404,
-     *   "message": "搜索历史记录不存在",
-     *   "data": null
-     * }
-     *
-     * 注意事项：
-     * - 只能删除当前用户自己的搜索历史
-     * - 删除后需要刷新搜索历史列表
-     * - 删除操作不可逆，需要确认提示
+     * 调用位置：HomeViewModel.performSearch()
+     * API: POST /api/search/history
      */
-    fun deleteSearchHistory(
-        historyId: String,
-        onSuccess: () -> Unit,
-        onError: (String) -> Unit
-    ) {
-        Thread {
-            Thread.sleep(200)
-
-            // TODO: 当后端API准备好后，取消注释以下代码
-            /*
-            try {
-                val response = apiService.deleteSearchHistory(historyId).execute()
-                if (response.isSuccessful && response.body()?.code == 200) {
-                    // 删除成功后，可以调用回调函数并刷新本地数据
-                    onSuccess()
-                } else {
-                    onError("删除搜索历史失败: ${response.body()?.message ?: "未知错误"}")
-                }
-            } catch (e: Exception) {
-                onError("网络错误: ${e.message}")
+    suspend fun addSearchHistory(
+        userId: String,
+        keyword: String
+    ): Result<String> {
+        Log.d(TAG, "addSearchHistory: 正在添加 '$keyword' (用户: $userId)") // <-- 添加日志
+        val request = SearchHistoryRequest(keyword = keyword, userId = userId)
+        return try {
+            val response = apiService.addSearchHistory(request)
+            if (response.isSuccessful && response.body()?.code == 200) {
+                Log.d(TAG, "addSearchHistory: 成功。") // <-- 添加日志
+                Result.success(response.body()?.data ?: "添加成功")
+            } else {
+                Log.w(TAG, "addSearchHistory: 失败。代码: ${response.code()}, 信息: ${response.body()?.message}") // <-- 添加日志
+                Result.failure(Exception("添加搜索历史失败: ${response.body()?.message ?: response.message()}"))
             }
-            */
+        } catch (e: Exception) {
+            Log.e(TAG, "addSearchHistory: 网络异常", e) // <-- 添加日志
+            Result.failure(Exception("网络错误 (addSearchHistory): ${e.message}"))
+        }
+    }
 
-            // 临时模拟成功 - 后端API完成后删除
-            onSuccess()
-        }.start()
+
+    /**
+     * 功能：删除单个搜索历史
+     *
+     * 调用位置：SearchScreen.kt, HomeViewModel.deleteSearchHistory()
+     * API: DELETE /api/search/history/{historyId}
+     */
+    suspend fun deleteSearchHistory(
+        historyId: String
+    ): Result<String> {
+        Log.d(TAG, "deleteSearchHistory: 正在删除: $historyId") // <-- 添加日志
+        return try {
+            val response = apiService.deleteSearchHistory(historyId)
+            if (response.isSuccessful && response.body()?.code == 200) {
+                Log.d(TAG, "deleteSearchHistory: 成功。") // <-- 添加日志
+                Result.success(response.body()?.data ?: "删除成功")
+            } else {
+                Log.w(TAG, "deleteSearchHistory: 失败。代码: ${response.code()}, 信息: ${response.body()?.message}") // <-- 添加日志
+                Result.failure(Exception("删除搜索历史失败: ${response.body()?.message ?: response.message()}"))
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "deleteSearchHistory: 网络异常", e) // <-- 添加日志
+            Result.failure(Exception("网络错误 (deleteSearchHistory): ${e.message}"))
+        }
     }
 
     /**
-     * 清空搜索历史
-     * 后端接入步骤：
-     * 1. 取消注释 apiService.clearSearchHistory(userId).execute() 调用
-     * 2. 处理网络响应，包括成功和错误情况
-     * 3. 移除模拟成功逻辑
-     * 调用位置：SearchScreen.kt, 用户点击"清空"按钮时
+     * 功能：清空搜索历史
      *
-     * 后端API实现示例：
-     * DELETE /api/search/history?userId={userId}
-     * 请求示例：DELETE /api/search/history?userId=current_user
-     * 请求头：需要Authorization token
-     * 响应示例：
-     * {
-     *   "code": 200,
-     *   "message": "搜索历史已清空",
-     *   "data": null
-     * }
-     *
-     * 错误响应示例：
-     * {
-     *   "code": 400,
-     *   "message": "用户ID不能为空",
-     *   "data": null
-     * }
-     *
-     * 注意事项：
-     * - 清空操作会删除用户的所有搜索历史记录
-     * - 操作不可逆，需要确认提示对话框
-     * - 清空后需要立即更新UI显示空状态
-     * - 建议在清空成功后调用getSearchHistory刷新数据
+     * 调用位置：SearchScreen.kt, HomeViewModel.clearSearchHistory()
+     * API: DELETE /api/search/history?userId={userId}
      */
-    fun clearSearchHistory(
-        userId: String,
-        onSuccess: () -> Unit,
-        onError: (String) -> Unit
-    ) {
-        Thread {
-            Thread.sleep(200)
-
-            // TODO: 当后端API准备好后，取消注释以下代码
-            /*
-            try {
-                val response = apiService.clearSearchHistory(userId).execute()
-                if (response.isSuccessful && response.body()?.code == 200) {
-                    // 清空成功后，可以调用回调函数
-                    onSuccess()
-                } else {
-                    onError("清空搜索历史失败: ${response.body()?.message ?: "未知错误"}")
-                }
-            } catch (e: Exception) {
-                onError("网络错误: ${e.message}")
+    suspend fun clearSearchHistory(
+        userId: String
+    ): Result<String> {
+        Log.d(TAG, "clearSearchHistory: 正在清空用户 $userId 的历史") // <-- 添加日志
+        return try {
+            val response = apiService.clearSearchHistory(userId)
+            if (response.isSuccessful && response.body()?.code == 200) {
+                Log.d(TAG, "clearSearchHistory: 成功。") // <-- 添加日志
+                Result.success(response.body()?.data ?: "清空成功")
+            } else {
+                Log.w(TAG, "clearSearchHistory: 失败。代码: ${response.code()}, 信息: ${response.body()?.message}") // <-- 添加日志
+                Result.failure(Exception("清空搜索历史失败: ${response.body()?.message ?: response.message()}"))
             }
-            */
-
-            // 临时模拟成功 - 后端API完成后删除
-            onSuccess()
-        }.start()
+        } catch (e: Exception) {
+            Log.e(TAG, "clearSearchHistory: 网络异常", e) // <-- 添加日志
+            Result.failure(Exception("网络错误 (clearSearchHistory): ${e.message}"))
+        }
     }
 
     /**
      * 功能：搜索任务
-     * 后端接入步骤：
-     * 1. 取消注释apiService.getTasks()调用（带search参数）
-     * 2. 处理网络响应
-     * 3. 移除模拟数据逻辑
+     *
      * 调用位置：HomeViewModel.performSearch(), 用户执行搜索时
+     * API: GET /api/tasks?search={keyword}&limit=8
      */
-    fun searchTasks(
-        keyword: String,
-        onSuccess: (List<Task>) -> Unit,
-        onError: (String) -> Unit
-    ) {
-        Thread {
-            Thread.sleep(500)
-
-            // TODO: 当后端API准备好后，取消注释以下代码
-            /*
-            try {
-                val response = apiService.getTasks(search = keyword).execute()
-                if (response.isSuccessful) {
-                    onSuccess(response.body() ?: emptyList())
-                } else {
-                    onError("搜索失败: ${response.code()}")
-                }
-            } catch (e: Exception) {
-                onError("网络错误: ${e.message}")
-            }
-            */
-
-            // 临时使用模拟数据 - 后端API完成后删除
-            val allTasks = getAllMockTasksForSearch()
-            val filteredTasks = allTasks.filter { task ->
-                task.title.contains(keyword, ignoreCase = true) ||
-                        task.description.contains(keyword, ignoreCase = true) ||
-                        task.location.contains(keyword, ignoreCase = true) ||
-                        task.destination.contains(keyword, ignoreCase = true) ||
-                        task.getTypeText().contains(keyword, ignoreCase = true)
-            }
-            onSuccess(filteredTasks)
-        }.start()
-    }
-
-
-    /**
-     * 获取用于搜索的模拟任务数据
-     * 这个方法复制了TaskRepository中的模拟数据，避免循环依赖
-     */
-    private fun getAllMockTasksForSearch(): List<Task> {
-        return listOf(
-            Task(
-                id = "1",
-                title = "麦当劳大套餐",
-                description = "校门口取餐，送至图书馆三楼 A301。请确保食物保持温热状态，饮料不要摇晃。",
-                price = 15.0,
-                type = com.example.campusrunner.model.TaskType.FOOD_DELIVERY,
-                status = com.example.campusrunner.model.TaskStatus.PENDING,
-                location = "学校南门麦当劳",
-                destination = "图书馆三楼 A301",
-                distance = 2.0,
-                publisherId = "user1",
-                publisherName = "张同学",
-                publisherAvatar = null,
-                publisherRating = 4.8,
-                createdAt = Date(System.currentTimeMillis() - 10 * 60 * 1000),
-                acceptedAt = null,
-                completedAt = null,
-                runnerId = null,
-                runnerName = null
-            ),
-            Task(
-                id = "2",
-                title = "打印 20 页文档",
-                description = "打印店取 20 页文件，送至教学楼 502。需要双面打印，黑色墨水。",
-                price = 8.0,
-                type = com.example.campusrunner.model.TaskType.PRINT,
-                status = com.example.campusrunner.model.TaskStatus.IN_PROGRESS,
-                location = "图书馆打印店",
-                destination = "教学楼 502",
-                distance = 1.0,
-                publisherId = "user2",
-                publisherName = "李同学",
-                publisherAvatar = null,
-                publisherRating = 4.9,
-                createdAt = Date(System.currentTimeMillis() - 30 * 60 * 1000),
-                acceptedAt = Date(System.currentTimeMillis() - 15 * 60 * 1000),
-                completedAt = null,
-                runnerId = "runner1",
-                runnerName = "王跑腿"
-            ),
-            Task(
-                id = "3",
-                title = "取快递包裹",
-                description = "韵达快递，收件人：小明。包裹较大，需要带小推车。",
-                price = 5.0,
-                type = com.example.campusrunner.model.TaskType.EXPRESS,
-                status = com.example.campusrunner.model.TaskStatus.PENDING,
-                location = "校门口快递点",
-                destination = "韵苑学生公寓 3栋 201",
-                distance = 0.5,
-                publisherId = "user3",
-                publisherName = "王同学",
-                publisherAvatar = null,
-                publisherRating = 4.7,
-                createdAt = Date(System.currentTimeMillis() - 5 * 60 * 1000),
-                acceptedAt = null,
-                completedAt = null,
-                runnerId = null,
-                runnerName = null
-            ),
-            Task(
-                id = "4",
-                title = "买感冒药和温度计",
-                description = "校医院购买感冒药和电子温度计，需要保留小票。",
-                price = 25.0,
-                type = com.example.campusrunner.model.TaskType.SHOPPING,
-                status = com.example.campusrunner.model.TaskStatus.PENDING,
-                location = "校医院药房",
-                destination = "紫菘学生公寓 5栋 305",
-                distance = 1.5,
-                publisherId = "user4",
-                publisherName = "赵同学",
-                publisherAvatar = null,
-                publisherRating = 4.8,
-                createdAt = Date(System.currentTimeMillis() - 20 * 60 * 1000),
-                acceptedAt = null,
-                completedAt = null,
-                runnerId = null,
-                runnerName = null
-            ),
-            Task(
-                id = "5",
-                title = "取中通快递",
-                description = "取中通快递，收件人：李华",
-                price = 6.0,
-                type = com.example.campusrunner.model.TaskType.EXPRESS,
-                status = com.example.campusrunner.model.TaskStatus.PENDING,
-                location = "快递点",
-                destination = "宿舍区",
-                distance = 0.8,
-                publisherId = "user5",
-                publisherName = "刘同学",
-                publisherAvatar = null,
-                publisherRating = 4.6,
-                createdAt = Date(System.currentTimeMillis() - 3 * 60 * 1000),
-                acceptedAt = null,
-                completedAt = null,
-                runnerId = null,
-                runnerName = null
-            ),
-            Task(
-                id = "6",
-                title = "买冰可乐",
-                description = "超市买一瓶冰可乐，送到操场",
-                price = 4.0,
-                type = com.example.campusrunner.model.TaskType.SHOPPING,
-                status = com.example.campusrunner.model.TaskStatus.PENDING,
-                location = "超市",
-                destination = "操场",
-                distance = 1.2,
-                publisherId = "user6",
-                publisherName = "陈同学",
-                publisherAvatar = null,
-                publisherRating = 4.7,
-                createdAt = Date(System.currentTimeMillis() - 8 * 60 * 1000),
-                acceptedAt = null,
-                completedAt = null,
-                runnerId = null,
-                runnerName = null
-            ),
-            Task(
-                id = "7",
-                title = "打印简历",
-                description = "打印店取 5 份简历，送至宿舍",
-                price = 10.0,
-                type = com.example.campusrunner.model.TaskType.PRINT,
-                status = com.example.campusrunner.model.TaskStatus.PENDING,
-                location = "打印店",
-                destination = "宿舍",
-                distance = 0.3,
-                publisherId = "user7",
-                publisherName = "杨同学",
-                publisherAvatar = null,
-                publisherRating = 4.9,
-                createdAt = Date(System.currentTimeMillis() - 15 * 60 * 1000),
-                acceptedAt = null,
-                completedAt = null,
-                runnerId = null,
-                runnerName = null
-            ),
-            Task(
-                id = "8",
-                title = "买薯片和可乐",
-                description = "小卖部买零食，送到宿舍",
-                price = 12.0,
-                type = com.example.campusrunner.model.TaskType.SHOPPING,
-                status = com.example.campusrunner.model.TaskStatus.IN_PROGRESS,
-                location = "小卖部",
-                destination = "宿舍",
-                distance = 0.1,
-                publisherId = "user8",
-                publisherName = "黄同学",
-                publisherAvatar = null,
-                publisherRating = 4.8,
-                createdAt = Date(System.currentTimeMillis() - 25 * 60 * 1000),
-                acceptedAt = Date(System.currentTimeMillis() - 10 * 60 * 1000),
-                completedAt = null,
-                runnerId = "runner2",
-                runnerName = "赵跑腿"
+    suspend fun searchTasks(
+        keyword: String
+    ): Result<List<Task>> {
+        Log.d(TAG, "searchTasks: 正在搜索任务... 关键字: '$keyword', 限制: 8") // <-- 3. 添加日志
+        return try {
+            // [修复] 调用 ApiService.kt 中 'getTasks' 端点，并传入 search 参数
+            // 限制8个结果
+            val response = apiService.getTasks(
+                search = keyword,
+                limit = 8,
+                page = 1
             )
-        )
+
+            if (response.isSuccessful) {
+                val tasks = response.body() ?: emptyList()
+                Log.d(TAG, "searchTasks: 成功。获取到 ${tasks.size} 个任务。") // <-- 4. 添加日志
+                Result.success(tasks)
+            } else {
+                Log.w(TAG, "searchTasks: 失败。代码: ${response.code()}, 信息: ${response.message()}") // <-- 5. 添加日志
+                Result.failure(Exception("搜索失败: ${response.code()} - ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "searchTasks: 网络异常", e) // <-- 6. 添加日志 (e 包含了详细堆栈)
+            Result.failure(Exception("网络错误 (searchTasks): ${e.message}"))
+        }
     }
+
+    // 移除了 getAllMockTasksForSearch() 模拟辅助函数
 }
+

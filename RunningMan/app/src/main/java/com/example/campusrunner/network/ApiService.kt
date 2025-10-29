@@ -15,15 +15,15 @@ interface ApiService {
      * GET /api/tasks?page=1&limit=20&type=FOOD_DELIVERY&search=麦当劳
      * 响应示例：
      * [
-     *   {
-     *     "id": "1",
-     *     "title": "麦当劳大套餐",
-     *     "description": "校门口取餐...",
-     *     "price": 15.0,
-     *     "type": "FOOD_DELIVERY",
-     *     "status": "PENDING",
-     *     ...
-     *   }
+     * {
+     * "id": "1",
+     * "title": "麦当劳大套餐",
+     * "description": "校门口取餐...",
+     * "price": 15.0,
+     * "type": "FOOD_DELIVERY",
+     * "status": "PENDING",
+     * ...
+     * }
      * ]
      */
     @GET("tasks")
@@ -54,9 +54,9 @@ interface ApiService {
      * 请求头：需要Authorization token
      * 响应示例：
      * {
-     *   "code": 200,
-     *   "message": "接单成功",
-     *   "data": "订单已接受"
+     * "code": 200,
+     * "message": "接单成功",
+     * "data": "订单已接受"
      * }
      */
     @POST("tasks/{id}/accept")
@@ -69,20 +69,20 @@ interface ApiService {
      * POST /api/tasks
      * 请求体：
      * {
-     *   "title": "麦当劳大套餐",
-     *   "description": "校门口取餐...",
-     *   "price": 15.0,
-     *   "type": "FOOD_DELIVERY",
-     *   "location": "学校南门麦当劳",
-     *   "destination": "图书馆三楼 A301",
-     *   "estimatedTime": 15,
-     *   "contactPhone": "138****1234"
+     * "title": "麦当劳大套餐",
+     * "description": "校门口取餐...",
+     * "price": 15.0,
+     * "type": "FOOD_DELIVERY",
+     * "location": "学校南门麦当劳",
+     * "destination": "图书馆三楼 A301",
+     * "estimatedTime": 15,
+     * "contactPhone": "138****1234"
      * }
      * 响应示例：
      * {
-     *   "code": 200,
-     *   "message": "任务发布成功",
-     *   "data": "任务ID：12345"
+     * "code": 200,
+     * "message": "任务发布成功",
+     * "data": "任务ID：12345"
      * }
      */
     @POST("tasks")
@@ -97,17 +97,17 @@ interface ApiService {
      * GET /api/chats/sessions
      * 响应示例：
      * [
-     *   {
-     *     "id": "chat1",
-     *     "orderId": "1",
-     *     "orderTitle": "麦当劳大套餐",
-     *     "participantId": "runner1",
-     *     "participantName": "张跑腿",
-     *     "lastMessage": "我快到校门口了...",
-     *     "unreadCount": 2,
-     *     "lastMessageTime": "2024-01-20T10:30:00Z",
-     *     "orderStatus": "IN_PROGRESS"
-     *   }
+     * {
+     * "id": "chat1",
+     * "orderId": "1",
+     * "orderTitle": "麦当劳大套餐",
+     * "participantId": "runner1",
+     * "participantName": "张跑腿",
+     * "lastMessage": "我快到校门口了...",
+     * "unreadCount": 2,
+     * "lastMessageTime": "2024-01-20T10:30:00Z",
+     * "orderStatus": "IN_PROGRESS"
+     * }
      * ]
      */
     @GET("chats/sessions")
@@ -120,16 +120,16 @@ interface ApiService {
      * GET /api/chats/1/messages
      * 响应示例：
      * [
-     *   {
-     *     "id": "msg1",
-     *     "orderId": "1",
-     *     "senderId": "runner1",
-     *     "senderName": "张跑腿",
-     *     "content": "我快到校门口了",
-     *     "messageType": "TEXT",
-     *     "timestamp": "2024-01-20T10:25:00Z",
-     *     "isRead": false
-     *   }
+     * {
+     * "id": "msg1",
+     * "orderId": "1",
+     * "senderId": "runner1",
+     * "senderName": "张跑腿",
+     * "content": "我快到校门口了",
+     * "messageType": "TEXT",
+     * "timestamp": "2024-01-20T10:25:00Z",
+     * "isRead": false
+     * }
      * ]
      */
     @GET("chats/{orderId}/messages")
@@ -142,14 +142,14 @@ interface ApiService {
      * POST /api/chats/1/messages
      * 请求体：
      * {
-     *   "content": "好的，我下去取",
-     *   "type": "CHAT"
+     * "content": "好的，我下去取",
+     * "type": "CHAT"
      * }
      * 响应示例：
      * {
-     *   "code": 200,
-     *   "message": "消息发送成功",
-     *   "data": "消息ID：msg123"
+     * "code": 200,
+     * "message": "消息发送成功",
+     * "data": "消息ID：msg123"
      * }
      */
     @POST("chats/{orderId}/messages")
@@ -165,17 +165,17 @@ interface ApiService {
      * GET /api/messages/system
      * 响应示例：
      * [
-     *   {
-     *     "id": "sys1",
-     *     "type": "ORDER_UPDATE",
-     *     "title": "订单已完成",
-     *     "content": "您的订单 #20240001 已完成",
-     *     "senderId": "system",
-     *     "senderName": "系统通知",
-     *     "orderId": "2",
-     *     "isRead": true,
-     *     "createdAt": "2024-01-20T10:00:00Z"
-     *   }
+     * {
+     * "id": "sys1",
+     * "type": "ORDER_UPDATE",
+     * "title": "订单已完成",
+     * "content": "您的订单 #20240001 已完成",
+     * "senderId": "system",
+     * "senderName": "系统通知",
+     * "orderId": "2",
+     * "isRead": true,
+     * "createdAt": "2024-01-20T10:00:00Z"
+     * }
      * ]
      */
     @GET("messages/system")
@@ -190,20 +190,20 @@ interface ApiService {
      * GET /api/orders/current
      * 响应示例：
      * [
-     *   {
-     *     "id": "live_1",
-     *     "orderId": "1",
-     *     "orderTitle": "麦当劳大套餐",
-     *     "runnerId": "runner1",
-     *     "runnerName": "张跑腿",
-     *     "status": "ON_THE_WAY",
-     *     "currentLocation": {
-     *       "latitude": 30.5163,
-     *       "longitude": 114.4204,
-     *       "address": "华中科技大学南三门附近"
-     *     },
-     *     ...
-     *   }
+     * {
+     * "id": "live_1",
+     * "orderId": "1",
+     * "orderTitle": "麦当劳大套餐",
+     * "runnerId": "runner1",
+     * "runnerName": "张跑腿",
+     * "status": "ON_THE_WAY",
+     * "currentLocation": {
+     * "latitude": 30.5163,
+     * "longitude": 114.4204,
+     * "address": "华中科技大学南三门附近"
+     * },
+     * ...
+     * }
      * ]
      */
     @GET("orders/current")
@@ -228,16 +228,16 @@ interface ApiService {
      * GET /api/user/profile
      * 响应示例：
      * {
-     *   "id": "1",
-     *   "studentId": "U202012345",
-     *   "name": "小明",
-     *   "avatar": "https://example.com/avatar.jpg",
-     *   "phone": "138****1234",
-     *   "email": "xiaoming@example.com",
-     *   "creditScore": 4.8,
-     *   "totalOrders": 8,
-     *   "totalIncome": 85.0,
-     *   "createdAt": "2024-01-01T00:00:00Z"
+     * "id": "1",
+     * "studentId": "U202012345",
+     * "name": "小明",
+     * "avatar": "https://example.com/avatar.jpg",
+     * "phone": "138****1234",
+     * "email": "xiaoming@example.com",
+     * "creditScore": 4.8,
+     * "totalOrders": 8,
+     * "totalIncome": 85.0, // <-- 后端也需要将此字段改为 "balance"
+     * "createdAt": "2024-01-01T00:00:00Z"
      * }
      */
     @GET("user/profile")
@@ -251,13 +251,36 @@ interface ApiService {
      * 请求体：UserProfile对象（部分字段）
      * 响应示例：
      * {
-     *   "code": 200,
-     *   "message": "个人信息更新成功",
-     *   "data": null
+     * "code": 200,
+     * "message": "个人信息更新成功",
+     * "data": null
      * }
      */
     @PUT("user/profile")
     suspend fun updateUserProfile(@Body profile: UserProfile): Response<ApiResponse<String>>
+
+    // --- (MODIFIED) ADDED: 新增 "增加余额" API ---
+    /**
+     * 功能：为用户增加余额 (跑腿员完成订单时调用)
+     * 调用位置：UserRepository.addBalance()
+     * 后端实现示例：
+     * POST /api/user/addBalance
+     * 请求体：
+     * {
+     * "userId": "runner1",
+     * "amount": 10.5
+     * }
+     * 响应示例：
+     * {
+     * "code": 200,
+     * "message": "余额更新成功",
+     * "data": "新的余额: 110.5"
+     * }
+     */
+    @POST("user/addBalance")
+    suspend fun addBalance(@Body request: AddBalanceRequest): Response<ApiResponse<String>>
+    // --- END: 新增 API ---
+
 
     // ===== 搜索相关API =====
 
@@ -268,17 +291,17 @@ interface ApiService {
      * GET /api/search/history?userId=1&limit=10
      * 响应示例：
      * {
-     *   "histories": [
-     *     {
-     *       "id": "1",
-     *       "userId": "1",
-     *       "keyword": "麦当劳",
-     *       "searchCount": 5,
-     *       "lastSearchedAt": "2024-01-20T10:30:00Z",
-     *       "createdAt": "2024-01-15T08:00:00Z"
-     *     }
-     *   ],
-     *   "total": 15
+     * "histories": [
+     * {
+     * "id": "1",
+     * "userId": "1",
+     * "keyword": "麦当劳",
+     * "searchCount": 5,
+     * "lastSearchedAt": "2024-01-20T10:30:00Z",
+     * "createdAt": "2024-01-15T08:00:00Z"
+     * }
+     * ],
+     * "total": 15
      * }
      */
     @GET("search/history")
@@ -294,14 +317,14 @@ interface ApiService {
      * POST /api/search/history
      * 请求体：
      * {
-     *   "keyword": "麦当劳",
-     *   "userId": "1"
+     * "keyword": "麦当劳",
+     * "userId": "1"
      * }
      * 响应示例：
      * {
-     *   "code": 200,
-     *   "message": "搜索历史添加成功",
-     *   "data": null
+     * "code": 200,
+     * "message": "搜索历史添加成功",
+     * "data": null
      * }
      */
     @POST("search/history")
@@ -314,9 +337,9 @@ interface ApiService {
      * DELETE /api/search/history/1
      * 响应示例：
      * {
-     *   "code": 200,
-     *   "message": "删除成功",
-     *   "data": null
+     * "code": 200,
+     * "message": "删除成功",
+     * "data": null
      * }
      */
     @DELETE("search/history/{id}")
@@ -329,9 +352,9 @@ interface ApiService {
      * DELETE /api/search/history?userId=1
      * 响应示例：
      * {
-     *   "code": 200,
-     *   "message": "搜索历史已清空",
-     *   "data": null
+     * "code": 200,
+     * "message": "搜索历史已清空",
+     * "data": null
      * }
      */
     @DELETE("search/history")
@@ -346,29 +369,29 @@ interface ApiService {
      * GET /api/orders/published?page=1&pageSize=20&status=COMPLETED
      * 响应示例：
      * {
-     *   "orders": [
-     *     {
-     *       "id": "1",
-     *       "title": "麦当劳大套餐",
-     *       "description": "校门口取餐...",
-     *       "price": 15.0,
-     *       "type": "外卖",
-     *       "status": "COMPLETED",
-     *       "createdAt": "2024-01-20T10:00:00Z",
-     *       "updatedAt": "2024-01-20T10:30:00Z",
-     *       "publisherId": "user1",
-     *       "publisherName": "小明",
-     *       "runnerId": "runner1",
-     *       "runnerName": "张同学",
-     *       "fromLocation": "校门口",
-     *       "toLocation": "图书馆三楼 A301",
-     *       "distance": 2.0,
-     *       "estimatedTime": 15
-     *     }
-     *   ],
-     *   "totalCount": 15,
-     *   "page": 1,
-     *   "pageSize": 20
+     * "orders": [
+     * {
+     * "id": "1",
+     * "title": "麦当劳大套餐",
+     * "description": "校门口取餐...",
+     * "price": 15.0,
+     * "type": "外卖",
+     * "status": "COMPLETED",
+     * "createdAt": "2024-01-20T10:00:00Z",
+     * "updatedAt": "2024-01-20T10:30:00Z",
+     * "publisherId": "user1",
+     * "publisherName": "小明",
+     * "runnerId": "runner1",
+     * "runnerName": "张同学",
+     * "fromLocation": "校门口",
+     * "toLocation": "图书馆三楼 A301",
+     * "distance": 2.0,
+     * "estimatedTime": 15
+     * }
+     * ],
+     * "totalCount": 15,
+     * "page": 1,
+     * "pageSize": 20
      * }
      */
     @GET("orders/published")
@@ -409,10 +432,10 @@ interface ApiService {
      * GET /api/orders/stats
      * 响应示例：
      * {
-     *   "totalPublished": 15,
-     *   "totalAccepted": 8,
-     *   "totalCompleted": 6,
-     *   "totalIncome": 120.0
+     * "totalPublished": 15,
+     * "totalAccepted": 8,
+     * "totalCompleted": 6,
+     * "totalIncome": 120.0
      * }
      */
     @GET("orders/stats")
@@ -425,9 +448,9 @@ interface ApiService {
      * POST /api/orders/1/accept
      * 响应示例：
      * {
-     *   "code": 200,
-     *   "message": "接单成功",
-     *   "data": null
+     * "code": 200,
+     * "message": "接单成功",
+     * "data": null
      * }
      */
     @POST("orders/{orderId}/accept")
@@ -440,9 +463,9 @@ interface ApiService {
      * POST /api/orders/1/complete
      * 响应示例：
      * {
-     *   "code": 200,
-     *   "message": "订单已完成",
-     *   "data": null
+     * "code": 200,
+     * "message": "订单已完成",
+     * "data": null
      * }
      */
     @POST("orders/{orderId}/complete")
@@ -455,9 +478,9 @@ interface ApiService {
      * POST /api/orders/1/cancel
      * 响应示例：
      * {
-     *   "code": 200,
-     *   "message": "订单已取消",
-     *   "data": null
+     * "code": 200,
+     * "message": "订单已取消",
+     * "data": null
      * }
      */
     @POST("orders/{orderId}/cancel")
@@ -472,22 +495,22 @@ interface ApiService {
      * POST /api/auth/login
      * 请求体：
      * {
-     *   "studentId": "U202012345",
-     *   "password": "password123"
+     * "studentId": "U202012345",
+     * "password": "password123"
      * }
      * 响应示例：
      * {
-     *   "code": 200,
-     *   "message": "登录成功",
-     *   "data": {
-     *     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-     *     "user": {
-     *       "id": "1",
-     *       "studentId": "U202012345",
-     *       "name": "小明",
-     *       ...
-     *     }
-     *   }
+     * "code": 200,
+     * "message": "登录成功",
+     * "data": {
+     * "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+     * "user": {
+     * "id": "1",
+     * "studentId": "U202012345",
+     * "name": "小明",
+     * ...
+     * }
+     * }
      * }
      */
     @POST("auth/login")
@@ -551,3 +574,17 @@ data class LoginResponse(
     val token: String,
     val user: UserProfile
 )
+
+// --- (MODIFIED) ADDED: 新增 "增加余额" 请求体 ---
+/**
+ * 功能：增加余额请求体
+ * 调用位置：UserRepository.addBalance() -> apiService.addBalance()
+ * @param userId 目标用户的ID
+ * @param amount 需要增加的金额
+ */
+data class AddBalanceRequest(
+    val userId: String,
+    val amount: Double
+)
+// --- END: 新增请求体 ---
+

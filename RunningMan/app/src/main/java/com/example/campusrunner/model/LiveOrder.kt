@@ -9,6 +9,7 @@ data class LiveOrder(
     val id: String,
     val orderId: String,
     val orderTitle: String,
+    val reward: Double,
     val runnerId: String,
     val runnerName: String,
     val runnerAvatar: String? = null,
@@ -18,7 +19,6 @@ data class LiveOrder(
     val currentLocation: Location? = null,
     val pickupLocation: Location,
     val deliveryLocation: Location,
-    val routePolyline: List<Location> = emptyList(), // 路线坐标点
     val lastUpdated: Date,
     val messages: List<OrderMessage> = emptyList()
 ) {

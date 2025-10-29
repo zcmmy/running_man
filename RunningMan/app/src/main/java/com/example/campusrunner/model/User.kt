@@ -11,7 +11,7 @@ data class UserProfile(
     val email: String? = null,
     val creditScore: Double = 5.0,
     val totalOrders: Int = 0,
-    val totalIncome: Double = 0.0,
+    val banlance: Double = 0.0,
     val createdAt: Date
 )
 

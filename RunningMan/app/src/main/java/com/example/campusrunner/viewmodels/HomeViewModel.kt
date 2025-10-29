@@ -45,7 +45,9 @@ class HomeViewModel : ViewModel() {
 
     init {
         loadTasks()
-        loadSearchHistory()
+        // 错误修复：不在初始化时加载搜索历史，
+        // 仅在用户打开搜索栏时 (openSearch) 才加载。
+        // loadSearchHistory()
     }
 
     /**
@@ -53,6 +55,7 @@ class HomeViewModel : ViewModel() {
      */
     fun openSearch() {
         _searchState.value = true
+        // 在这里加载搜索历史是正确的
         loadSearchHistory()
     }
 
@@ -73,6 +76,8 @@ class HomeViewModel : ViewModel() {
 
     /**
      * 执行搜索
+     * (已适配 SearchRepository)
+     * [已修复] 修正了在非协程作用域中调用 suspend 函数的问题
      */
     fun performSearch(keyword: String) {
         if (keyword.isBlank()) return
@@ -82,52 +87,51 @@ class HomeViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                // TODO: 这里的 SearchRepository 也需要按照 TaskRepository 的模式进行修改
-                // 1. 将 SearchRepository.searchTasks 改为 suspend fun ... : Result<List<Task>>
-                // 2. 移除 onSuccess / onError 回调
-                // 3. 在 viewModelScope.launch 中处理 Result
+                // 1. 执行搜索, 如果失败则抛出异常
+                val tasks = SearchRepository.searchTasks(keyword).getOrThrow()
 
-                // 模拟搜索延迟
-                kotlinx.coroutines.delay(500)
+                // 搜索成功
+                _tasks.value = tasks
+                // closeSearch() // !! 移除 !! - 我们不再关闭搜索，而是导航到结果页
 
-                SearchRepository.searchTasks(
-                    keyword = keyword,
-                    onSuccess = { tasks ->
-                        _loadingState.value = false
-                        _tasks.value = tasks
-                        closeSearch() // 搜索完成后关闭搜索界面
-                    },
-                    onError = { error ->
-                        _loadingState.value = false
-                        _errorState.value = "搜索失败: $error"
+                // 2. 搜索成功后，将关键字添加到搜索历史
+                // 启动一个*新*的协程来处理这个非关键的后台任务
+                // 这样它就不会阻塞UI，并且可以安全地调用 suspend 函数
+                viewModelScope.launch {
+                    try {
+                        SearchRepository.addSearchHistory(currentUserId, keyword)
+                    } catch (e: Exception) {
+                        // 忽略添加历史的错误，只在控制台打印
+                        println("添加搜索历史失败: ${e.message}")
                     }
-                )
+                }
+
             } catch (e: Exception) {
-                _loadingState.value = false
+                // 捕获 searchTasks.getOrThrow() 抛出的异常
                 _errorState.value = "搜索异常: ${e.message}"
+            } finally {
+                _loadingState.value = false
             }
         }
     }
 
     /**
      * 加载搜索历史
+     * (已适配 SearchRepository)
      */
     fun loadSearchHistory() {
         viewModelScope.launch {
             try {
-                // TODO: 这里的 SearchRepository 也需要按照 TaskRepository 的模式进行修改
-                // 1. 将 SearchRepository.getSearchHistory 改为 suspend fun ... : Result<List<SearchHistory>>
-                // 2. 移除 onSuccess / onError 回调
-                SearchRepository.getSearchHistory(
+                val result = SearchRepository.getSearchHistory(
                     userId = currentUserId,
-                    limit = 10,
-                    onSuccess = { histories ->
-                        _searchHistory.value = histories
-                    },
-                    onError = { error ->
-                        _errorState.value = "加载搜索历史失败: $error"
-                    }
+                    limit = 10
                 )
+                result.onSuccess { histories ->
+                    _searchHistory.value = histories
+                }.onFailure { error ->
+                    // 仅在搜索历史加载失败时显示错误，不影响首页任务列表
+                    _errorState.value = "加载搜索历史失败: ${error.message}"
+                }
             } catch (e: Exception) {
                 _errorState.value = "加载搜索历史异常: ${e.message}"
             }
@@ -136,20 +140,18 @@ class HomeViewModel : ViewModel() {
 
     /**
      * 删除搜索历史项
+     * (已适配 SearchRepository)
      */
     fun deleteSearchHistory(historyId: String) {
         viewModelScope.launch {
             try {
-                // TODO: 这里的 SearchRepository 也需要按照 TaskRepository 的模式进行修改
-                SearchRepository.deleteSearchHistory(
-                    historyId = historyId,
-                    onSuccess = {
-                        loadSearchHistory() // 重新加载
-                    },
-                    onError = { error ->
-                        _errorState.value = "删除搜索历史失败: $error"
-                    }
-                )
+                val result = SearchRepository.deleteSearchHistory(historyId)
+
+                result.onSuccess {
+                    loadSearchHistory() // 重新加载
+                }.onFailure { error ->
+                    _errorState.value = "删除搜索历史失败: ${error.message}"
+                }
             } catch (e: Exception) {
                 _errorState.value = "删除搜索历史异常: ${e.message}"
             }
@@ -158,20 +160,17 @@ class HomeViewModel : ViewModel() {
 
     /**
      * 清空搜索历史
+     * (已适配 SearchRepository)
      */
     fun clearSearchHistory() {
         viewModelScope.launch {
             try {
-                // TODO: 这里的 SearchRepository 也需要按照 TaskRepository 的模式进行修改
-                SearchRepository.clearSearchHistory(
-                    userId = currentUserId,
-                    onSuccess = {
-                        _searchHistory.value = emptyList()
-                    },
-                    onError = { error ->
-                        _errorState.value = "清空搜索历史失败: $error"
-                    }
-                )
+                val result = SearchRepository.clearSearchHistory(userId = currentUserId)
+                result.onSuccess {
+                    _searchHistory.value = emptyList() // 立即清空UI
+                }.onFailure { error ->
+                    _errorState.value = "清空搜索历史失败: ${error.message}"
+                }
             } catch (e: Exception) {
                 _errorState.value = "清空搜索历史异常: ${e.message}"
             }
@@ -180,7 +179,7 @@ class HomeViewModel : ViewModel() {
 
     /**
      * 加载任务列表
-     * 已更新为调用 suspend 函数并处理 Result
+     * (已适配 TaskRepository)
      */
     fun loadTasks() {
         _loadingState.value = true
@@ -199,7 +198,7 @@ class HomeViewModel : ViewModel() {
                 }
 
             } catch (e: Exception) {
-                // 捕获协程中的意外异常 (例如 kotlinx.coroutines.JobCancellationException)
+                // 捕获协程中的意外异常
                 _errorState.value = "加载任务异常: ${e.message}"
             } finally {
                 // 无论成功还是失败，最后都要停止加载状态

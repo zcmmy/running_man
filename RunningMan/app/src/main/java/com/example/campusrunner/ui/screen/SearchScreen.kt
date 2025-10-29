@@ -42,11 +42,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.campusrunner.viewmodels.HomeViewModel
-// 添加缺失的导入
 import androidx.compose.foundation.clickable
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,6 +62,8 @@ fun SearchScreen(navController: NavController) {
 
     // 自动获取焦点
     LaunchedEffect(Unit) {
+        // 稍微延迟以确保UI准备好
+        kotlinx.coroutines.delay(100)
         keyboardController?.show()
     }
 
@@ -72,7 +74,7 @@ fun SearchScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // 返回按钮
@@ -83,8 +85,6 @@ fun SearchScreen(navController: NavController) {
                     )
                 }
 
-                Spacer(modifier = Modifier.width(8.dp))
-
                 // 搜索输入框
                 TextField(
                     value = localSearchText,
@@ -93,7 +93,14 @@ fun SearchScreen(navController: NavController) {
                         viewModel.updateSearchText(it)
                     },
                     modifier = Modifier.weight(1f),
-                    placeholder = { Text("搜索跑腿任务...") },
+                    placeholder = {
+                        Text(
+                            "搜索跑腿任务...",
+                            maxLines = 1, // 修复：确保占位符不换行
+                            softWrap = false,
+                            overflow = TextOverflow.Ellipsis // 超出部分显示...
+                        )
+                    },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Filled.Search,
@@ -129,12 +136,16 @@ fun SearchScreen(navController: NavController) {
                 Text(
                     text = "搜索",
                     color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .clickable {  // 这里使用 clickable
+                        .clickable {
                             if (localSearchText.isNotBlank()) {
+                                // 1. 执行搜索 (这将更新 HomeViewModel 中的 _tasks)
                                 viewModel.performSearch(localSearchText)
-                                navController.popBackStack() // 搜索后返回首页
+                                // 2. 导航到新的搜索结果页面
+                                // 注意：你需要在 NavHost 中定义 "searchResults/{keyword}" 路由
+                                navController.navigate("searchResults/$localSearchText")
                             }
                         }
                         .padding(horizontal = 12.dp, vertical = 8.dp)
@@ -151,7 +162,9 @@ fun SearchScreen(navController: NavController) {
             if (searchHistory.isEmpty()) {
                 // 空状态
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 64.dp), // 向上移动一点，避免太居中
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -159,7 +172,7 @@ fun SearchScreen(navController: NavController) {
                         imageVector = Icons.Filled.History,
                         contentDescription = "搜索历史",
                         modifier = Modifier.size(64.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
@@ -190,21 +203,24 @@ fun SearchScreen(navController: NavController) {
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(6.dp))
-                                .clickable {  // 这里使用 clickable
+                                .clickable {
                                     viewModel.clearSearchHistory()
                                 }
                                 .padding(horizontal = 8.dp, vertical = 4.dp)
                         )
                     }
 
-                    LazyColumn {
+                    LazyColumn(
+                        modifier = Modifier.padding(horizontal = 12.dp) // 给列表项增加左右内边距
+                    ) {
                         items(searchHistory, key = { it.id }) { history ->
                             SearchHistoryItem(
                                 history = history,
                                 onItemClick = {
                                     viewModel.updateSearchText(history.keyword)
                                     viewModel.performSearch(history.keyword)
-                                    navController.popBackStack()
+                                    // 修改：点击历史项也导航到搜索结果页面
+                                    navController.navigate("searchResults/${history.keyword}")
                                 },
                                 onDeleteClick = {
                                     viewModel.deleteSearchHistory(history.id)
@@ -224,47 +240,43 @@ fun SearchHistoryItem(
     onItemClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
-    Card(
+    // 使用 Row 替代 Card 以获得更轻量的列表项
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp)
-            .clickable(onClick = onItemClick),  // 这里使用 clickable
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .clickable(onClick = onItemClick)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+        // 图标和文本
+        Icon(
+            imageVector = Icons.Filled.History,
+            contentDescription = "历史",
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(20.dp)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Text(
+            text = history.keyword,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        // 删除按钮
+        IconButton(
+            onClick = onDeleteClick,
+            modifier = Modifier.size(24.dp)
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = history.keyword,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${history.getTimeText()} · 搜索${history.searchCount}次",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            IconButton(
-                onClick = onDeleteClick,
-                modifier = Modifier.size(24.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "删除",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            Icon(
+                imageVector = Icons.Filled.Close,
+                contentDescription = "删除",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                modifier = Modifier.size(18.dp)
+            )
         }
     }
 }

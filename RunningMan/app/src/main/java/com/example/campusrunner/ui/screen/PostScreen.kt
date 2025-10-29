@@ -162,7 +162,7 @@ fun PostScreen(navController: NavController? = null) {
                             value = location,
                             onValueChange = { location = it },
                             label = { Text("取货地点") },
-                            placeholder = { Text("例如：校门口") },
+                            placeholder = { Text("例如：南大门") },
                             leadingIcon = {
                                 Icon(Icons.Filled.LocationOn, null)
                             },

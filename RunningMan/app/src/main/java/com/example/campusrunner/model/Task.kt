@@ -98,4 +98,28 @@ data class Task(
     fun getEstimatedTimeText(): String {
         return estimatedTime?.let { "预计${it}分钟完成" } ?: "时间待定"
     }
+
+    fun Task.getTypeText(): String {
+        return when(type) {
+            TaskType.FOOD_DELIVERY -> "外卖"
+            TaskType.EXPRESS -> "快递"
+            TaskType.PRINT -> "打印"
+            TaskType.SHOPPING -> "购物"
+            TaskType.OTHER -> "其他"
+        }
+    }
+
+    fun Task.getCreatedTimeText(): String {
+        val now = Date()
+        val diff = now.time - createdAt.time
+        val minutes = diff / (60 * 1000)
+
+        return when {
+            minutes < 1 -> "刚刚"
+            minutes < 60 -> "${minutes}分钟前"
+            minutes < 1440 -> "${minutes / 60}小时前"
+            else -> "${minutes / 1440}天前"
+        }
+    }
+
 }

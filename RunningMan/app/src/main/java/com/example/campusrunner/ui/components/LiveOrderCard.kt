@@ -186,94 +186,9 @@ fun LiveOrderCard(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-
-            // 地图预览区域
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-                contentAlignment = Alignment.Center
-            ) {
-                // 这里应该显示真实的地图，但作为预览我们使用简化的UI
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.LocationOn,
-                        contentDescription = "地图",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(32.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "实时位置追踪",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = liveOrder.currentLocation?.address ?: "位置信息加载中...",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 最后更新时间和进度
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = liveOrder.getLastUpdatedText(),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                // 进度指示器
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(4.dp)
-                        .padding(horizontal = 8.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(getProgressPercentage(liveOrder.status))
-                            .height(4.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(MaterialTheme.colorScheme.primary)
-                    )
-                }
-
-                Text(
-                    text = "${getProgressPercentage(liveOrder.status) * 100}%",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
         }
     }
 }
 
-/**
- * 根据订单状态计算进度百分比
- */
-private fun getProgressPercentage(status: OrderStatus): Float {
-    return when (status) {
-        OrderStatus.WAITING_ACCEPT -> 0.1f
-        OrderStatus.ACCEPTED -> 0.3f
-        OrderStatus.PICKING_UP -> 0.5f
-        OrderStatus.ON_THE_WAY -> 0.7f
-        OrderStatus.ARRIVING -> 0.9f
-        OrderStatus.COMPLETED -> 1.0f
-        OrderStatus.CANCELLED -> 0.0f
-    }
-}

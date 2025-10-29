@@ -3,8 +3,10 @@ package com.example.campusrunner.viewmodels
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.campusrunner.data.TaskRepository
 import com.example.campusrunner.model.Task
+import kotlinx.coroutines.launch
 
 /**
  * 任务详情ViewModel - 管理任务详情页面的状态和业务逻辑
@@ -35,44 +37,52 @@ class TaskDetailViewModel : ViewModel() {
         _loadingState.value = true
         _errorState.value = null
 
-        TaskRepository.getTaskById(
-            taskId = taskId,
-            onSuccess = { task ->
-                _loadingState.value = false
-                _taskState.value = task
+        viewModelScope.launch {
+            try {
+                val result = TaskRepository.getTaskById(taskId)
 
-                // 订阅任务状态更新
-                TaskRepository.subscribeToTaskUpdates(taskId) { newStatus ->
-                    _taskState.value = _taskState.value?.copy(status = newStatus)
+                result.onSuccess { task ->
+                    _taskState.value = task
+
+                    // 订阅任务状态更新
+                    TaskRepository.subscribeToTaskUpdates(taskId) { newStatus ->
+                        _taskState.value = _taskState.value?.copy(status = newStatus)
+                    }
+                }.onFailure { error ->
+                    _errorState.value = error.message ?: "加载任务详情失败"
                 }
-            },
-            onError = { error ->
+
+            } catch (e: Exception) {
+                _errorState.value = "加载异常: ${e.message}"
+            } finally {
                 _loadingState.value = false
-                _errorState.value = error
             }
-        )
+        }
     }
 
     /**
      * 接单操作
      * @param taskId 任务ID
-     * @param runnerId 跑腿员ID（在实际应用中从用户信息获取）
      */
-    fun acceptTask(taskId: String, runnerId: String = "current_user_id") {
+    fun acceptTask(taskId: String) {
         _acceptTaskState.value = AcceptTaskState.Loading
 
-        TaskRepository.acceptTask(
-            taskId = taskId,
-            runnerId = runnerId,
-            onSuccess = {
-                _acceptTaskState.value = AcceptTaskState.Success
-                // 重新加载任务详情以更新状态
-                loadTaskDetail(taskId)
-            },
-            onError = { error ->
-                _acceptTaskState.value = AcceptTaskState.Error(error)
+        viewModelScope.launch {
+            try {
+                // runnerId 已移除，假设后端通过 token 自动识别用户
+                val result = TaskRepository.acceptTask(taskId)
+
+                result.onSuccess {
+                    _acceptTaskState.value = AcceptTaskState.Success
+                    // 重新加载任务详情以更新状态
+                    loadTaskDetail(taskId)
+                }.onFailure { error ->
+                    _acceptTaskState.value = AcceptTaskState.Error(error.message ?: "接单失败")
+                }
+            } catch (e: Exception) {
+                _acceptTaskState.value = AcceptTaskState.Error("接单异常: ${e.message}")
             }
-        )
+        }
     }
 
     /**

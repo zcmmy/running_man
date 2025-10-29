@@ -40,6 +40,7 @@ class HomeViewModel : ViewModel() {
     val errorState: State<String?> = _errorState
 
     // 当前用户ID（模拟数据）
+    // TODO: 实际接入时，应从登录态或本地存储中获取真实用户ID
     private val currentUserId = "current_user"
 
     init {
@@ -81,10 +82,14 @@ class HomeViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
+                // TODO: 这里的 SearchRepository 也需要按照 TaskRepository 的模式进行修改
+                // 1. 将 SearchRepository.searchTasks 改为 suspend fun ... : Result<List<Task>>
+                // 2. 移除 onSuccess / onError 回调
+                // 3. 在 viewModelScope.launch 中处理 Result
+
                 // 模拟搜索延迟
                 kotlinx.coroutines.delay(500)
 
-                // 执行搜索（模拟）
                 SearchRepository.searchTasks(
                     keyword = keyword,
                     onSuccess = { tasks ->
@@ -110,6 +115,9 @@ class HomeViewModel : ViewModel() {
     fun loadSearchHistory() {
         viewModelScope.launch {
             try {
+                // TODO: 这里的 SearchRepository 也需要按照 TaskRepository 的模式进行修改
+                // 1. 将 SearchRepository.getSearchHistory 改为 suspend fun ... : Result<List<SearchHistory>>
+                // 2. 移除 onSuccess / onError 回调
                 SearchRepository.getSearchHistory(
                     userId = currentUserId,
                     limit = 10,
@@ -132,6 +140,7 @@ class HomeViewModel : ViewModel() {
     fun deleteSearchHistory(historyId: String) {
         viewModelScope.launch {
             try {
+                // TODO: 这里的 SearchRepository 也需要按照 TaskRepository 的模式进行修改
                 SearchRepository.deleteSearchHistory(
                     historyId = historyId,
                     onSuccess = {
@@ -153,6 +162,7 @@ class HomeViewModel : ViewModel() {
     fun clearSearchHistory() {
         viewModelScope.launch {
             try {
+                // TODO: 这里的 SearchRepository 也需要按照 TaskRepository 的模式进行修改
                 SearchRepository.clearSearchHistory(
                     userId = currentUserId,
                     onSuccess = {
@@ -170,28 +180,30 @@ class HomeViewModel : ViewModel() {
 
     /**
      * 加载任务列表
+     * 已更新为调用 suspend 函数并处理 Result
      */
     fun loadTasks() {
         _loadingState.value = true
+        _errorState.value = null // 开始加载时清除之前的错误信息
 
         viewModelScope.launch {
             try {
-                // 模拟网络延迟
-                kotlinx.coroutines.delay(1000)
+                // 调用重构后的 suspend 函数
+                val result = TaskRepository.getTasksFromServer()
 
-                TaskRepository.getTasksFromServer(
-                    onSuccess = { tasks ->
-                        _loadingState.value = false
-                        _tasks.value = tasks
-                    },
-                    onError = { error ->
-                        _loadingState.value = false
-                        _errorState.value = "加载任务失败: $error"
-                    }
-                )
+                // 使用 Result 的 onSucess 和 onFailure 处理结果
+                result.onSuccess { tasks ->
+                    _tasks.value = tasks
+                }.onFailure { error ->
+                    _errorState.value = "加载任务失败: ${error.message}"
+                }
+
             } catch (e: Exception) {
-                _loadingState.value = false
+                // 捕获协程中的意外异常 (例如 kotlinx.coroutines.JobCancellationException)
                 _errorState.value = "加载任务异常: ${e.message}"
+            } finally {
+                // 无论成功还是失败，最后都要停止加载状态
+                _loadingState.value = false
             }
         }
     }
@@ -203,3 +215,4 @@ class HomeViewModel : ViewModel() {
         _errorState.value = null
     }
 }
+

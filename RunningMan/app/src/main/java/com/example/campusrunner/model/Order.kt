@@ -5,13 +5,6 @@ import java.util.Date
 /**
  * 订单状态枚举（用于订单历史）
  */
-enum class OrderHistoryStatus {
-    PENDING,      // 待接单
-    ACCEPTED,     // 已接单
-    IN_PROGRESS,  // 进行中
-    COMPLETED,    // 已完成
-    CANCELLED     // 已取消
-}
 
 /**
  * 订单数据模型
@@ -22,7 +15,7 @@ data class Order(
     val description: String,
     val price: Double,
     val type: String, // 订单类型：外卖、快递、打印等
-    val status: OrderHistoryStatus, // 修改为 OrderHistoryStatus
+    val status: TaskStatus, // 修改为 OrderHistoryStatus
     val createdAt: Date,
     val updatedAt: Date,
     val publisherId: String, // 发布者ID

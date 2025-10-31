@@ -174,8 +174,8 @@ fun MessagesScreen(navController: NavController? = null) {
                     ) {
                         // 实时订单卡片（只在有进行中订单时显示）
                         liveOrder?.let { order ->
-                            if (order.status != com.example.campusrunner.model.OrderStatus.COMPLETED &&
-                                order.status != com.example.campusrunner.model.OrderStatus.CANCELLED) {
+                            if (order.status != com.example.campusrunner.model.TaskStatus.COMPLETED &&
+                                order.status != com.example.campusrunner.model.TaskStatus.CANCELLED) {
 
                                 // *** 修复点 2：更新 LiveOrderCard 调用 ***
                                 LiveOrderCard(

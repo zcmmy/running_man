@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.campusrunner.model.Order
-import com.example.campusrunner.model.OrderHistoryStatus // 修改导入
+import com.example.campusrunner.model.TaskStatus
 import com.example.campusrunner.ui.components.EnhancedCard
 import com.example.campusrunner.ui.viewmodels.OrderHistoryViewModel
 
@@ -279,22 +279,20 @@ private fun OrderItem(order: Order) {
     }
 }
 
-private fun getStatusText(status: OrderHistoryStatus): String { // 修改参数类型
+private fun getStatusText(status: TaskStatus): String { // 修改参数类型
     return when (status) {
-        OrderHistoryStatus.PENDING -> "待接单"
-        OrderHistoryStatus.ACCEPTED -> "已接单"
-        OrderHistoryStatus.IN_PROGRESS -> "进行中"
-        OrderHistoryStatus.COMPLETED -> "已完成"
-        OrderHistoryStatus.CANCELLED -> "已取消"
+        TaskStatus.PENDING -> "待接单"
+        TaskStatus.IN_PROGRESS -> "进行中"
+        TaskStatus.COMPLETED -> "已完成"
+        TaskStatus.CANCELLED -> "已取消"
     }
 }
 
-private fun getStatusColor(status: OrderHistoryStatus): Color { // 修改参数类型
+private fun getStatusColor(status: TaskStatus): Color { // 修改参数类型
     return when (status) {
-        OrderHistoryStatus.PENDING -> Color(0xFFFF9800) // 橙色
-        OrderHistoryStatus.ACCEPTED -> Color(0xFF2196F3) // 蓝色
-        OrderHistoryStatus.IN_PROGRESS -> Color(0xFF4CAF50) // 绿色
-        OrderHistoryStatus.COMPLETED -> Color(0xFF9E9E9E) // 灰色
-        OrderHistoryStatus.CANCELLED -> Color(0xFFF44336) // 红色
+        TaskStatus.PENDING -> Color(0xFFFF9800) // 橙色
+        TaskStatus.IN_PROGRESS -> Color(0xFF4CAF50) // 绿色
+        TaskStatus.COMPLETED -> Color(0xFF9E9E9E) // 灰色
+        TaskStatus.CANCELLED -> Color(0xFFF44336) // 红色
     }
 }

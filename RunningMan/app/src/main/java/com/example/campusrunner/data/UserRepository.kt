@@ -44,7 +44,7 @@ object UserRepository {
             val response = apiService.login(LoginRequest(studentId, password))
             if (response.isSuccessful && response.body() != null) {
                 val loginResponse = response.body()!!
-
+                Log.w("UserRepository", "loginResponse: 登录时接收到数据 $loginResponse.data")
                 if (loginResponse.code == 200) {
                     // 保存 token
                     val token = loginResponse.data?.token ?: ""

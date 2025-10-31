@@ -1,9 +1,9 @@
 package com.example.campusrunner.data
 
 import com.example.campusrunner.model.Order
-import com.example.campusrunner.model.OrderHistoryStatus
 import com.example.campusrunner.model.OrderListResponse
 import com.example.campusrunner.model.OrderStats
+import com.example.campusrunner.model.TaskStatus
 import com.example.campusrunner.network.RetrofitClient
 // (MODIFIED) 导入 ApiService
 import com.example.campusrunner.network.ApiService
@@ -41,7 +41,7 @@ class OrderRepository {
      * (MODIFIED: 已接入后端)
      * 调用位置：OrderHistoryScreen, OrderHistoryViewModel
      */
-    suspend fun fetchPublishedOrders(status: OrderHistoryStatus? = null) {
+    suspend fun fetchPublishedOrders(status: TaskStatus? = null) {
         _isLoading.value = true
         _error.value = null
 
@@ -71,7 +71,7 @@ class OrderRepository {
      * (MODIFIED: 已接入后端)
      * 调用位置：OrderHistoryScreen, OrderHistoryViewModel
      */
-    suspend fun fetchAcceptedOrders(status: OrderHistoryStatus? = null) {
+    suspend fun fetchAcceptedOrders(status: TaskStatus? = null) {
         _isLoading.value = true
         _error.value = null
 
@@ -143,7 +143,7 @@ class OrderRepository {
                 // 订单完成成功后，可以更新本地订单状态
                 _acceptedOrders.value = _acceptedOrders.value.map { order ->
                     if (order.id == orderId) {
-                        order.copy(status = OrderHistoryStatus.COMPLETED)
+                        order.copy(status = TaskStatus.COMPLETED)
                     } else {
                         order
                     }
@@ -173,7 +173,7 @@ class OrderRepository {
                 // 订单取消成功后，更新本地订单状态
                 _publishedOrders.value = _publishedOrders.value.map { order ->
                     if (order.id == orderId) {
-                        order.copy(status = OrderHistoryStatus.CANCELLED)
+                        order.copy(status = TaskStatus.CANCELLED)
                     } else {
                         order
                     }

@@ -1,5 +1,6 @@
 package com.example.campusrunner.data
 
+import android.util.Log
 import com.example.campusrunner.model.ChatMessage
 import com.example.campusrunner.model.ChatSession
 import com.example.campusrunner.model.Message
@@ -28,6 +29,7 @@ object MessageRepository {
         return withContext(Dispatchers.IO) {
             try {
                 val response = apiService.getChatSessions()
+                Log.d("MessageReposity", "response: ${response.body()}")
                 if (response.isSuccessful) {
                     response.body() ?: emptyList() // 成功则返回数据
                 } else {

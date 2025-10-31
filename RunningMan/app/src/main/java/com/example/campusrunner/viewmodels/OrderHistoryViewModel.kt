@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.campusrunner.data.OrderRepository
 import com.example.campusrunner.model.Order
-import com.example.campusrunner.model.OrderHistoryStatus
+import com.example.campusrunner.model.TaskStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +30,7 @@ class OrderHistoryViewModel : ViewModel() {
     /**
      * 获取用户发布的订单列表
      */
-    fun fetchPublishedOrders(status: OrderHistoryStatus? = null) {
+    fun fetchPublishedOrders(status: TaskStatus? = null) {
         viewModelScope.launch {
             repository.fetchPublishedOrders(status)
         }
@@ -39,7 +39,7 @@ class OrderHistoryViewModel : ViewModel() {
     /**
      * 获取用户接单的订单列表
      */
-    fun fetchAcceptedOrders(status: OrderHistoryStatus? = null) {
+    fun fetchAcceptedOrders(status: TaskStatus? = null) {
         viewModelScope.launch {
             repository.fetchAcceptedOrders(status)
         }

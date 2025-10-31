@@ -35,7 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.campusrunner.model.LiveOrder
-import com.example.campusrunner.model.OrderStatus
+import com.example.campusrunner.model.TaskStatus
 
 /**
  * 实时订单卡片 (新文件)
@@ -61,10 +61,7 @@ fun LiveOrderCard(
 
     // *** 关键逻辑：判断订单是否处于可“完成”的状态 ***
     val canComplete = when (liveOrder.status) {
-        OrderStatus.ACCEPTED,
-        OrderStatus.PICKING_UP,
-        OrderStatus.ON_THE_WAY,
-        OrderStatus.ARRIVING -> true
+        TaskStatus.IN_PROGRESS -> true
         else -> false // WAITING_ACCEPT, COMPLETED, CANCELLED 不可完成
     }
 

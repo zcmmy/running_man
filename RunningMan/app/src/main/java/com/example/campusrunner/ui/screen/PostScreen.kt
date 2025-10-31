@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.campusrunner.data.TaskRepository
 import com.example.campusrunner.data.UserRepository
+import com.example.campusrunner.model.TaskStatus
 import com.example.campusrunner.model.TaskType
 import com.example.campusrunner.network.TaskRequest
 import kotlinx.coroutines.launch
@@ -259,8 +260,9 @@ fun PostScreen(navController: NavController? = null) {
                         // TODO: 您需要一个UI来选择类型，这里暂时硬编码
                         type = TaskType.FOOD_DELIVERY,
                         location = location,
-                        destination = destination
+                        destination = destination,
                     )
+                    Log.d("PostScreen", "TaskRequest: $taskRequest")
 
                     scope.launch {
                         try {

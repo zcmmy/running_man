@@ -1,5 +1,6 @@
 package com.example.campusrunner.data
 
+import android.util.Log
 import com.example.campusrunner.model.Task
 import com.example.campusrunner.model.TaskStatus
 import com.example.campusrunner.network.ApiService
@@ -24,6 +25,7 @@ object TaskRepository {
         taskId: String,
     ): Result<Task> {
         return try {
+            Log.d("getTaskById", "getTaskById: 失败。TaskId: $taskId")
             val response = apiService.getTaskDetail(taskId)
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)

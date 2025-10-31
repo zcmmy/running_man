@@ -67,6 +67,11 @@ fun SearchScreen(navController: NavController) {
         keyboardController?.show()
     }
 
+    // 添加加载搜索历史
+    LaunchedEffect(Unit) {
+        viewModel.loadSearchHistory()
+    }
+
     Scaffold(
         topBar = {
             // 搜索栏

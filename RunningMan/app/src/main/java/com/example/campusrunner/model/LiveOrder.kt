@@ -14,7 +14,7 @@ data class LiveOrder(
     val runnerName: String,
     val runnerAvatar: String? = null,
     val runnerPhone: String? = null,
-    val status: OrderStatus,
+    val status: TaskStatus,
     val estimatedArrival: Date? = null,
     val currentLocation: Location? = null,
     val pickupLocation: Location,
@@ -55,15 +55,6 @@ data class LiveOrder(
 /**
  * 订单状态（更细粒度的状态）
  */
-enum class OrderStatus {
-    WAITING_ACCEPT,      // 待接单
-    ACCEPTED,           // 已接单
-    PICKING_UP,         // 取货中
-    ON_THE_WAY,         // 配送中
-    ARRIVING,           // 即将到达
-    COMPLETED,          // 已完成
-    CANCELLED           // 已取消
-}
 
 /**
  * 地理位置信息

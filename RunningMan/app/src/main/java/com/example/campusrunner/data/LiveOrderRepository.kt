@@ -1,10 +1,10 @@
 package com.example.campusrunner.data
 
+import android.util.Log
 import com.example.campusrunner.model.LiveOrder
 import com.example.campusrunner.model.Location
 import com.example.campusrunner.model.OrderMessage
 import com.example.campusrunner.model.OrderMessageType
-import com.example.campusrunner.model.OrderStatus
 import com.example.campusrunner.network.ApiService
 import com.example.campusrunner.network.MessageRequest
 import com.example.campusrunner.network.RetrofitClient
@@ -33,6 +33,7 @@ object LiveOrderRepository {
         return withContext(Dispatchers.IO) {
             try {
                 val response = apiService.getCurrentOrders()
+                Log.d("LiveOrderReposity", "getCurrentOrders: ${response.body()}")
                 if (response.isSuccessful) {
                     // API返回一个列表，我们取第一个作为当前的活跃订单
                     // 你可能需要更复杂的逻辑来处理多个活跃订单

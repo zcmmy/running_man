@@ -308,7 +308,7 @@ fun ChatSessionItem(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = session.participantName.first().toString(),
+                    text = (session.participantName?.firstOrNull() ?: "待").toString(),
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
@@ -325,7 +325,7 @@ fun ChatSessionItem(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = session.participantName,
+                        text = session.participantName ?: "待接单",
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Medium
                     )

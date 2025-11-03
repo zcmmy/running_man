@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.campusrunner.data.LiveOrderRepository
 import com.example.campusrunner.data.MessageRepository
-import com.example.campusrunner.data.UserRepository // ADDED: 导入真实的 UserRepository
+import com.example.campusrunner.data.UserRepository
 import com.example.campusrunner.model.ChatSession
 import com.example.campusrunner.model.LiveOrder
 import com.example.campusrunner.model.Message
@@ -16,19 +16,6 @@ import kotlinx.coroutines.launch
  * 消息页面ViewModel
  * (已更新为使用协程并添加完成订单逻辑)
  */
-
-// DELETED: 移除模拟的 UserRepository，我们将使用真实的
-/*
-// 模拟用户仓库，用于获取当前用户ID
-// TODO: 替换为真实的
-object UserRepository {
-    // 模拟：假设当前登录的用户ID是 "runner1"。
-    // 在真实应用中，这应该从你的登录/会w话管理器中获取。
-    fun getCurrentUserId(): String = "runner1"
-}
-*/
-
-
 class MessagesViewModel : ViewModel() {
 
     // 聊天会话状态
@@ -55,7 +42,7 @@ class MessagesViewModel : ViewModel() {
     private val _selectedTab = mutableStateOf(0)
     val selectedTab: State<Int> = _selectedTab
 
-    // *** 新增: 当前用户ID ***
+    // 新增: 当前用户ID
     private val _currentUserId = mutableStateOf<String?>(null)
     val currentUserId: State<String?> = _currentUserId
 
@@ -99,10 +86,10 @@ class MessagesViewModel : ViewModel() {
      */
     private suspend fun loadLiveOrder() {
         try {
-            // MODIFIED: 确保这里调用的是真实的 UserRepository
+            // 确保这里调用的是真实的 UserRepository
             _currentUserId.value = UserRepository.getCurrentUserId()
 
-            // *** MODIFIED: 调用 suspend 版的 getCurrentLiveOrder ***
+            // 调用 suspend 版的 getCurrentLiveOrder
             val liveOrder = LiveOrderRepository.getCurrentLiveOrder()
             _liveOrderState.value = liveOrder
 
@@ -133,8 +120,41 @@ class MessagesViewModel : ViewModel() {
         _selectedTab.value = tabIndex
     }
 
+    // --- [!! 核心修复 !!] ---
     /**
-     * 标记消息为已读
+     * (新函数) 立即在本地将聊天标记为已读
+     * 这会为用户提供即时的UI反馈，防止竞争条件。
+     * @param sessionId 要标记的 ChatSession 的 ID (可空)
+     */
+    fun markChatSessionAsReadLocally(sessionId: String?) {
+        // [!! 修复 !!] 增加对 null 的检查
+        if (sessionId == null) {
+            println("markChatSessionAsReadLocally: sessionId 为 null，已忽略")
+            return
+        }
+
+        val currentSessions = _chatSessionsState.value
+
+        // 检查该会话是否真的存在且未读
+        val sessionExists = currentSessions.any { it.id == sessionId && it.unreadCount > 0 }
+
+        if (sessionExists) {
+            // 创建一个新的列表，其中该会话的 unreadCount 已被设为 0
+            _chatSessionsState.value = currentSessions.map { session ->
+                if (session.id == sessionId) {
+                    session.copy(unreadCount = 0)
+                } else {
+                    session
+                }
+            }
+        }
+        // 如果会话不存在或 unreadCount 已经为 0，则无需执行任何操作
+    }
+    // --- [!! 修复结束 !!] ---
+
+
+    /**
+     * 标记(系统)消息为已读
      */
     fun markMessageAsRead(messageId: String) {
         // (此函数不变，依赖 Repository 中的存根)
@@ -156,7 +176,7 @@ class MessagesViewModel : ViewModel() {
         _liveOrderState.value?.let { liveOrder ->
             viewModelScope.launch {
                 try {
-                    // *** MODIFIED: 调用 suspend 版的 sendMessageToRunner ***
+                    // 调用 suspend 版的 sendMessageToRunner
                     LiveOrderRepository.sendMessageToRunner(
                         orderId = liveOrder.orderId,
                         message = message
@@ -170,7 +190,7 @@ class MessagesViewModel : ViewModel() {
     }
 
     /**
-     * *** MODIFIED: 完成实时订单 (已更新) ***
+     * 完成实时订单 (已更新)
      */
     fun completeLiveOrder() {
         _liveOrderState.value?.let { order ->
@@ -182,19 +202,15 @@ class MessagesViewModel : ViewModel() {
                     // 1. 标记订单完成 (你已有的逻辑)
                     LiveOrderRepository.completeOrder(order.orderId)
 
-                    // --- ADDED: 收入核心逻辑 ---
                     // 2. 订单完成后，为跑腿员增加余额
-                    // (调用我们添加到真实 UserRepository 的 suspend fun addBalance 方法)
                     try {
                         // 假设 'order.reward' 字段已在 LiveOrder.kt 中添加
                         UserRepository.addBalance(order.runnerId, order.reward)
                     } catch (e: Exception) {
                         // 即使余额更新失败，订单也已完成。
-                        // 在真实应用中，这里需要更健壮的事务或重试逻辑
-                        println("Warning: 订单已完成，但更新余额失败: ${e.message}")
+                        println("警告: 订单已完成，但更新余额失败: ${e.message}")
                         _errorState.value = "订单已完成，但更新余额失败"
                     }
-                    // --- END: 收入核心逻辑 ---
 
                     // 3. 清理本地状态
                     _liveOrderState.value = null // 清除本地的实时订单

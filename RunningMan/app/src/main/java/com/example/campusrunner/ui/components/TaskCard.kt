@@ -116,12 +116,6 @@ fun GridTaskCard(
                         com.example.campusrunner.model.TaskStatus.CANCELLED -> Color(0xFF9E9E9E)
                     }
                 )
-
-                Text(
-                    text = "${task.distance}km",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
             }
         }
     }

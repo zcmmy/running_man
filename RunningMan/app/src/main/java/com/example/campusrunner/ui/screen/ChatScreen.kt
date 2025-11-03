@@ -24,68 +24,42 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.campusrunner.model.ChatMessage
-import com.example.campusrunner.model.ChatMessageType
+import com.example.campusrunner.viewmodels.ChatViewModel
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     navController: NavController,
-    orderId: String
+    orderId: String, // orderId 仍然由导航传入
+    viewModel: ChatViewModel = viewModel() // 自动获取 ViewModel 实例
 ) {
-    var messageText by remember { mutableStateOf("") }
-
-    // 模拟聊天消息 - 使用新的 ChatMessage 类
-    val messages = listOf(
-        ChatMessage(
-            id = "1",
-            orderId = orderId,
-            senderId = "runner1",
-            senderName = "张跑腿",
-            content = "我快到校门口了。",
-            messageType = ChatMessageType.TEXT,
-            timestamp = Date(System.currentTimeMillis() - 10 * 60 * 1000)
-        ),
-        ChatMessage(
-            id = "2",
-            orderId = orderId,
-            senderId = "current_user",
-            senderName = "您",
-            content = "好的，我下去取。",
-            messageType = ChatMessageType.TEXT,
-            timestamp = Date(System.currentTimeMillis() - 8 * 60 * 1000)
-        ),
-        ChatMessage(
-            id = "3",
-            orderId = orderId,
-            senderId = "runner1",
-            senderName = "张跑腿",
-            content = "大约 5 分钟。",
-            messageType = ChatMessageType.TEXT,
-            timestamp = Date(System.currentTimeMillis() - 5 * 60 * 1000)
-        ),
-        ChatMessage(
-            id = "4",
-            orderId = orderId,
-            senderId = "current_user",
-            senderName = "您",
-            content = "收到，谢谢！",
-            messageType = ChatMessageType.TEXT,
-            timestamp = Date(System.currentTimeMillis() - 3 * 60 * 1000)
-        )
-    )
+    // 从 ViewModel 订阅状态
+    val messages by viewModel.messages.collectAsState()
+    val messageText by viewModel.messageText.collectAsState()
+    // val error by viewModel.error.collectAsState() // 可以用来显示错误提示
 
     val listState = rememberLazyListState()
+
+    // 当消息列表更新时，自动滚动到底部
+    LaunchedEffect(messages) {
+        if (messages.isNotEmpty()) {
+            listState.animateScrollToItem(messages.size - 1)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -120,10 +94,12 @@ fun ChatScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 state = listState
             ) {
+                // 使用来自 ViewModel 的真实消息列表
                 items(messages) { message ->
                     ChatBubble(
                         message = message,
-                        isSent = message.senderId == "current_user" // 假设当前用户ID是"current_user"
+                        // 使用 ViewModel 判断是否是当前用户发送的
+                        isSent = viewModel.isMessageSentByCurrentUser(message)
                     )
                 }
             }
@@ -136,8 +112,8 @@ fun ChatScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(
-                    value = messageText,
-                    onValueChange = { messageText = it },
+                    value = messageText, // 绑定到 ViewModel
+                    onValueChange = { viewModel.onMessageChanged(it) }, // 更新 ViewModel
                     modifier = Modifier.weight(1f),
                     placeholder = { Text("输入消息...") },
                     shape = RoundedCornerShape(24.dp)
@@ -145,12 +121,8 @@ fun ChatScreen(
 
                 IconButton(
                     onClick = {
-                        // 发送消息逻辑
-                        if (messageText.isNotBlank()) {
-                            // 调用发送消息API
-                            // MessageRepository.sendMessage(orderId, messageText) { ... }
-                            messageText = ""
-                        }
+                        // 调用 ViewModel 的发送方法
+                        viewModel.sendMessage()
                     },
                     modifier = Modifier
                         .size(48.dp)
@@ -172,58 +144,77 @@ fun ChatBubble(
     message: ChatMessage,
     isSent: Boolean
 ) {
+    // [Alignment] 气泡的对齐方式：
+    // isSent 为 true (用户) -> Alignment.CenterEnd (靠右)
+    // isSent 为 false (对方) -> Alignment.CenterStart (靠左)
+    val alignment = if (isSent) Alignment.CenterEnd else Alignment.CenterStart
+
+    // [Color] 气泡的颜色：
+    // isSent 为 true (用户) -> 浅蓝色 (0xFFD0E6FF)
+    // isSent 为 false (对方) -> 浅灰色 (0xFFF0F0F0)
+    val bubbleColor = if (isSent) Color(0xFFD0E6FF) else Color(0xFFF0F0F0)
+
+    // [Text Color] 文字的颜色：
+    // isSent 为 true (用户) -> 黑色 (在浅蓝色背景上)
+    // isSent 为 false (对方) -> 黑色 (在浅灰色背景上)
+    val textColor = Color.Black
+
+    // [Timestamp Color] 时间戳的颜色
+    val timestampColor = Color.Gray
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp),
-        contentAlignment = if (isSent) Alignment.CenterEnd else Alignment.CenterStart
+        contentAlignment = alignment // <-- 使用定义好的对齐
     ) {
         Card(
             modifier = Modifier.padding(4.dp),
             shape = RoundedCornerShape(16.dp),
             colors = androidx.compose.material3.CardDefaults.cardColors(
-                containerColor = if (isSent) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.surfaceVariant
-                }
+                containerColor = bubbleColor // <-- 使用定义好的气泡颜色
             )
         ) {
             Column(
                 modifier = Modifier.padding(12.dp)
             ) {
-                // 显示发送者名称（只显示对方的名字）
-                if (!isSent) {
-                    Text(
-                        text = message.senderName,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = 2.dp)
-                    )
-                }
+                // [!! 已移除 !!]
+                // 不再显示对方的 senderName
 
                 // 消息内容
                 Text(
-                    text = message.content,
-                    color = if (isSent) {
-                        Color.White
-                    } else {
-                        MaterialTheme.colorScheme.onSurface
-                    }
+                    // [FIX]: 使用 Elvis 运算符 (?:) 提供默认值，防止 null
+                    text = message.content ?: "",
+                    color = textColor // <-- 使用定义好的文字颜色
                 )
 
                 // 时间戳
                 Text(
-                    text = message.getTimeText(),
+                    // [FIX]: formatTimestamp 函数现在可以安全处理 null
+                    text = formatTimestamp(message.timestamp),
                     style = MaterialTheme.typography.labelSmall,
-                    color = if (isSent) {
-                        Color.White.copy(alpha = 0.7f)
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    },
+                    color = timestampColor.copy(alpha = 0.7f), // <-- 使用定义好的时间戳颜色
                     modifier = Modifier.padding(top = 2.dp)
                 )
             }
         }
     }
 }
+
+/**
+ * 格式化时间戳 (Date) 为 "HH:mm" 格式
+ * (假设 ChatMessage.timestamp 是 java.util.Date)
+ *
+ * [FIX]: 接受一个可空的 Date? 类型
+ */
+@Composable
+private fun formatTimestamp(timestamp: Date?): String {
+    return remember(timestamp) {
+        if (timestamp == null) {
+            "--:--" // [FIX]: 如果 timestamp 为 null，返回一个安全的占位符
+        } else {
+            SimpleDateFormat("HH:mm", Locale.getDefault()).format(timestamp)
+        }
+    }
+}
+

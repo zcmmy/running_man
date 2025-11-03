@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +33,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,12 +41,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.campusrunner.ui.components.LiveOrderCard // 确保 LiveOrderCard 在这个包名下
+import com.example.campusrunner.model.ChatSession
+import com.example.campusrunner.model.Message
+import com.example.campusrunner.model.MessageType
+import com.example.campusrunner.model.TaskStatus
+import com.example.campusrunner.ui.components.LiveOrderCard
 import com.example.campusrunner.viewmodels.MessagesViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -62,17 +71,41 @@ fun MessagesScreen(navController: NavController? = null) {
     val error = viewModel.errorState.value
     val selectedTab = viewModel.selectedTab.value
 
-    // *** 修复点 1：从 ViewModel 获取 currentUserId ***
+    // 从 ViewModel 获取 currentUserId
     val currentUserId = viewModel.currentUserId.value
 
     // Snackbar状态管理
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    // 加载数据
-    LaunchedEffect(Unit) {
-        viewModel.loadMessages()
+    // --- [!! 核心修改 !!] ---
+    // 恢复使用 DisposableEffect 来监听生命周期。
+    // 这将使页面在每次从 ChatScreen 返回 (ON_RESUME) 时
+    // 都调用 viewModel.loadMessages() 来刷新数据。
+
+    // 1. 获取当前生命周期所有者
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    // 2. 使用 DisposableEffect 监听生命周期
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            // 3. 当页面“恢复”时 (包括从 ChatScreen 返回)
+            if (event == Lifecycle.Event.ON_RESUME) {
+                // 4. 重新加载消息
+                viewModel.loadMessages()
+            }
+        }
+
+        // 添加观察者
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        // 5. 在 Composable 销毁时移除观察者
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
+    // --- [!! 修改结束 !!] ---
+
 
     // 处理错误状态
     LaunchedEffect(error) {
@@ -160,7 +193,7 @@ fun MessagesScreen(navController: NavController? = null) {
                             color = MaterialTheme.colorScheme.error
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        androidx.compose.material3.Button(
+                        Button(
                             onClick = { viewModel.loadMessages() }
                         ) {
                             Text("重新加载")
@@ -174,17 +207,15 @@ fun MessagesScreen(navController: NavController? = null) {
                     ) {
                         // 实时订单卡片（只在有进行中订单时显示）
                         liveOrder?.let { order ->
-                            if (order.status != com.example.campusrunner.model.TaskStatus.COMPLETED &&
-                                order.status != com.example.campusrunner.model.TaskStatus.CANCELLED) {
+                            if (order.status != TaskStatus.COMPLETED &&
+                                order.status != TaskStatus.CANCELLED) {
 
-                                // *** 修复点 2：更新 LiveOrderCard 调用 ***
                                 LiveOrderCard(
                                     liveOrder = order,
                                     navController = navController,
                                     onSendMessage = { message ->
                                         viewModel.sendMessageToRunner(message)
                                     },
-                                    // *** 传入新参数 ***
                                     currentUserId = currentUserId,
                                     onCompleteOrder = {
                                         viewModel.completeLiveOrder()
@@ -199,13 +230,17 @@ fun MessagesScreen(navController: NavController? = null) {
                             0 -> ChatSessionsList(
                                 sessions = chatSessions,
                                 onSessionClick = { session ->
+                                    // 1. [!! 已注释 !!] 禁用点击时本地标记已读的功能
+                                    // viewModel.markChatSessionAsReadLocally(session.id)
+                                    // 2. 执行导航
                                     navController?.navigate("chat/${session.orderId}")
                                 }
                             )
                             1 -> SystemMessagesList(
                                 messages = systemMessages,
                                 onMessageClick = { message ->
-                                    viewModel.markMessageAsRead(message.id)
+                                    // [!! 已注释 !!] 禁用点击时标记已读的功能
+                                    // viewModel.markMessageAsRead(message.id)
                                     // 如果是订单相关消息，可以跳转到订单详情
                                     message.orderId?.let { orderId ->
                                         navController?.navigate("detail/$orderId")
@@ -219,13 +254,6 @@ fun MessagesScreen(navController: NavController? = null) {
         }
     }
 }
-
-// (为了完整性，我从你上传的文件中复制了以下 Composable，并添加了 getTimeText 和 getTypeIcon 的简单实现)
-
-// -----------------------------------------------------------------
-// 以下是 MessagesScreen.kt 中的其余 Composable
-// (为解决编译问题，我添加了 getTimeText 和 getTypeIcon 的辅助函数)
-// -----------------------------------------------------------------
 
 /**
  * 辅助函数：格式化日期
@@ -249,21 +277,20 @@ private fun Date.getTimeText(): String {
 /**
  * 辅助函数：获取消息图标
  */
-private fun com.example.campusrunner.model.Message.getTypeIcon(): String {
+private fun Message.getTypeIcon(): String {
     return when (this.type) {
-        com.example.campusrunner.model.MessageType.ORDER_UPDATE -> "📦"
-        com.example.campusrunner.model.MessageType.PROMOTION -> "🎉"
-        com.example.campusrunner.model.MessageType.SYSTEM -> "⚙️"
-        com.example.campusrunner.model.MessageType.CHAT -> "💬"
+        MessageType.ORDER_UPDATE -> "📦"
+        MessageType.PROMOTION -> "🎉"
+        MessageType.SYSTEM -> "⚙️"
+        MessageType.CHAT -> "💬"
         else -> "💡"
     }
 }
 
-
 @Composable
 fun ChatSessionsList(
-    sessions: List<com.example.campusrunner.model.ChatSession>,
-    onSessionClick: (com.example.campusrunner.model.ChatSession) -> Unit
+    sessions: List<ChatSession>,
+    onSessionClick: (ChatSession) -> Unit
 ) {
     if (sessions.isEmpty()) {
         EmptyState(
@@ -284,7 +311,7 @@ fun ChatSessionsList(
 
 @Composable
 fun ChatSessionItem(
-    session: com.example.campusrunner.model.ChatSession,
+    session: ChatSession,
     onClick: () -> Unit
 ) {
     Card(
@@ -355,6 +382,8 @@ fun ChatSessionItem(
                 )
             }
 
+            // [!! 已注释 !!] 禁用未读消息计数UI
+            /*
             // 未读消息计数
             if (session.unreadCount > 0) {
                 Spacer(modifier = Modifier.width(8.dp))
@@ -373,14 +402,15 @@ fun ChatSessionItem(
                     )
                 }
             }
+            */
         }
     }
 }
 
 @Composable
 fun SystemMessagesList(
-    messages: List<com.example.campusrunner.model.Message>,
-    onMessageClick: (com.example.campusrunner.model.Message) -> Unit
+    messages: List<Message>,
+    onMessageClick: (Message) -> Unit
 ) {
     if (messages.isEmpty()) {
         EmptyState(
@@ -401,7 +431,7 @@ fun SystemMessagesList(
 
 @Composable
 fun SystemMessageItem(
-    message: com.example.campusrunner.model.Message,
+    message: Message,
     onClick: () -> Unit
 ) {
     Card(
@@ -434,11 +464,8 @@ fun SystemMessageItem(
                         text = message.title,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Medium,
-                        color = if (!message.isRead) {
-                            MaterialTheme.colorScheme.onSurface
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        }
+                        // [!! 已修改 !!] 移除未读时的加粗颜色，统一使用默认色
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         text = message.createdAt.getTimeText(), // 使用辅助函数
@@ -456,6 +483,8 @@ fun SystemMessageItem(
                 )
             }
 
+            // [!! 已注释 !!] 禁用未读标识（红点）
+            /*
             // 未读标识
             if (!message.isRead) {
                 Spacer(modifier = Modifier.width(8.dp))
@@ -466,6 +495,7 @@ fun SystemMessageItem(
                         .background(MaterialTheme.colorScheme.primary)
                 )
             }
+            */
         }
     }
 }

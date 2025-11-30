@@ -25,15 +25,6 @@ object RetrofitClient {
             val originalRequest = chain.request()
             val requestBuilder = originalRequest.newBuilder()
                 .addHeader("Content-Type", "application/json")
-
-            // TODO: 添加认证token（需要先实现用户登录功能）
-            /**
-             * 功能：为每个请求自动添加认证token
-             * 实现步骤：
-             * 1. 用户登录成功后，将token保存到本地存储（如SharedPreferences）
-             * 2. 在这里从本地存储读取token并添加到请求头
-             * 3. 如果token过期，可以在这里添加token刷新逻辑
-             */
             getAuthToken()?.let { token ->
                 requestBuilder.addHeader("Authorization", "Bearer $token")
             }

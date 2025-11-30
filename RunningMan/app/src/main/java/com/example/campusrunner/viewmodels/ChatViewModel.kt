@@ -88,7 +88,7 @@ class ChatViewModel(
             } catch (e: Exception) {
                 Log.e("ChatViewModel", "Failed to send message", e)
                 _error.value = "发送失败: ${e.message}"
-                // (可选) 恢复未发送的文字
+                // 恢复未发送的文字
                 _messageText.value = content
             }
         }

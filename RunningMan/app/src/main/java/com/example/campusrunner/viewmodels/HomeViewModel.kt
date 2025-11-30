@@ -93,11 +93,6 @@ class HomeViewModel : ViewModel() {
 
                 // 搜索成功
                 _tasks.value = tasks
-                // closeSearch() // !! 移除 !! - 我们不再关闭搜索，而是导航到结果页
-
-                // 2. 搜索成功后，将关键字添加到搜索历史
-                // 启动一个*新*的协程来处理这个非关键的后台任务
-                // 这样它就不会阻塞UI，并且可以安全地调用 suspend 函数
                 viewModelScope.launch {
                     try {
                         SearchRepository.addSearchHistory(currentUserId, keyword)

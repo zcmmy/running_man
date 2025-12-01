@@ -53,7 +53,7 @@ object TaskRepository {
             if (response.isSuccessful && response.body()?.code == 200) {
                 Result.success(response.body()?.data ?: "接单成功")
             } else {
-                Result.failure(Exception("接单失败: ${response.body()?.message ?: "未知错误"}"))
+                Result.failure(Exception("接单失败: ${response.body()?.message ?: "不能接取自己发布的订单"}"))
             }
         } catch (e: Exception) {
             Result.failure(Exception("网络错误: ${e.message}"))

@@ -17,8 +17,6 @@ import java.util.Date
  */
 object LiveOrderRepository {
 
-    // 移除了 mockLiveOrder 模拟数据
-
     // 注入 ApiService
     private val apiService: ApiService = RetrofitClient.apiService
 
@@ -55,8 +53,6 @@ object LiveOrderRepository {
         orderId: String,
         onUpdate: (LiveOrder) -> Unit
     ): () -> Unit {
-        // TODO: 将此实现替换为真实的 WebSocket 客户端连接
-        // 模拟实时更新
         val updateThread = Thread {
             try {
                 while (!Thread.interrupted()) {
